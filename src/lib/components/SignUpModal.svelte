@@ -8,20 +8,19 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form>
+        <form method="POST" action="?/signup">
           <div class="mb-3">
             <label for="email" class="col-form-label">Email:</label>
-            <input type="email" class="form-control" id="email">
+            <input type="email" class="form-control" id="email" name="email">
           </div>
           <div class="mb-3">
             <label for="password" class="col-form-label">Password:</label>
-            <input type="password" class="form-control" id="password">
+            <input type="password" class="form-control" id="password" name="password">
           </div>
+          <button type="submit" class="btn btn-primary">Sign up</button>
         </form>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary">Sign up</button>
-      </div>
+
     </div>
   </div>
 </div>
