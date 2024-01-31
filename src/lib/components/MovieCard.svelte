@@ -18,10 +18,12 @@
 <style>
   .card {
     margin-bottom: 30px;
+    border-radius: 3%;
     
   }
 
   .card-img-top {
     height: 320px;
+    border-radius: 3%;
   }
 </style>

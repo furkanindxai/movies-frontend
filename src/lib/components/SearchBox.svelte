@@ -15,4 +15,18 @@
         margin: auto;
         
     }
+    input {
+        background-color: #2B3035;
+        border: 0px;
+        color: #B4B4B8;
+    }
+    input:focus {
+        background-color: #2B3035;
+        border: 0px;
+        color: #B4B4B8;
+    }
+
+    ::placeholder {
+        color: #B4B4B8;
+    }
 </style>

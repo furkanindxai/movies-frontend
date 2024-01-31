@@ -1,9 +1,17 @@
 <script>
     import SignUpModal from "./SignUpModal.svelte";
     import SignInModal from "./SignInModal.svelte";
+    import authStore from "../stores/authStore";
+    import { goto } from '$app/navigation';
+
+    const handleSignOut = () => {
+      $authStore =  {email:'',token:'', userId:'', roles:'', isAuth: 0}
+      window.localStorage.clear()
+      goto('/')
+    }
 </script>
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+<nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top" data-bs-theme="dark">
   <div class="container-fluid">
     <img src='https://cdn-icons-png.flaticon.com/512/2503/2503508.png' alt='logo' style="height: 40px; padding:5px">
     <a class="navbar-brand" href="#">MoviesDB</a>
@@ -11,16 +19,27 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <SignUpModal />
-        </li>
-        <li class="nav-item">
-            <SignInModal />
-        </li>
- 
+      {#if $authStore.isAuth === 0}
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <button type="button" class="nav-link active" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo" aria-current="page">Sign up</button>
+          </li>
+          <li class="nav-item">
+            <button type="button" class="nav-link active" data-bs-toggle="modal" data-bs-target="#signInModal" data-bs-whatever="@mdo" aria-current="page">Sign in</button>
+          </li>
+        </ul>
+      {:else if $authStore.isAuth === 1}
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a type="button" class="nav-link active" data-bs-toggle="modal" aria-current="page">My movies</a>
 
-      </ul>
+          </li>
+          <li class="nav-item">
+            <button type="button" class="nav-link active" aria-current="page" on:click={handleSignOut}>Sign out</button>
+
+          </li>
+        </ul>
+      {/if}
 
     </div>
   </div>
