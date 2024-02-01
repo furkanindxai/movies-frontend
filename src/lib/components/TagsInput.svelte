@@ -6,10 +6,10 @@
     let tags = []
 
     const dispatch = createEventDispatcher();
-    const handleSubmit = () => {
-        // dispatch('message', {
-		// 	text: 'Hello!'
-		// });
+    const handleTagChange = () => {
+        dispatch('tags', {
+			tags
+		});
 	}
     
     const handleKeydown = (e) => {
@@ -21,6 +21,7 @@
                 tags = [...tags, tagContent]
                 e.target.value = ''
             }
+            handleTagChange()
             
         }
    
@@ -29,11 +30,12 @@
     const handleDelete = (e, tag) => {
         e.preventDefault()
         tags = tags.filter((tagFromArray) => tag !== tagFromArray)
-        console.log(tags)
+        handleTagChange()
+
     }
 </script>
 
-<input type="text" class={inputClass} id={id} name={id} required on:keydown={(e)=>handleKeydown(e)}>
+<input type="text" class={inputClass} id={id} name={id} on:keydown={(e)=>handleKeydown(e)}>
 {#if tags.length > 0}
     <div class="tags-input">
         <ul>

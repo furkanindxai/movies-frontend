@@ -1,5 +1,7 @@
 <script>
   import TagsInput from "./TagsInput.svelte";
+  import authStore from "../stores/authStore"
+  import moviesStore from "../stores/moviesStore";
 
   let title;
   let releaseYear;
@@ -11,33 +13,38 @@
   let description;
   let responseCode = 0;
   let result;
+
+
   const handleAdd = async (e)=>{
     e.preventDefault()
+    
+    const movie = {title, releaseYear, genres, directors, producers, image, imageThumbnail, description}
+    const response = await fetch("http://localhost:3000/api/v1/movies", {
+      method: "POST", // or 'PUT'
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${$authStore.token}`
+      },
+      body: JSON.stringify(movie),
+      });
 
-    // const user = {email, password}
-    // const response = await fetch("http://localhost:3000/api/v1/auth/signin", {
-    //   method: "POST", // or 'PUT'
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(user),
-    //   });
-
-    // responseCode = response.status;
-    // result = await response.json();
-    // if (responseCode === 200) 
-    // {
-    //     const closeButton = document.getElementById('signInModalCloser')
-    //     closeButton.click()
-    //     authStore.set({...result, isAuth: 1})
-    //     window.localStorage.setItem('authState',JSON.stringify($authStore))
-    //     email = ''
-    //     password = ''
- 
-    // }
-    // else {
-    //   result = result.message;
-    // }
+    responseCode = response.status;
+    result = await response.json();
+    result = result.message;
+    if (responseCode === 201) 
+    {
+      title = '';
+      releaseYear = '';
+      genres = [];
+      directors = [];
+      producers = [];
+      image = '';
+      imageThumbnail = '';
+      description = '';
+      let updatedMovies = await fetch("http://localhost:3000/api/v1/movies/")
+      updatedMovies = await updatedMovies.json()
+      moviesStore.set(updatedMovies)
+    }
   }
 
 </script>
@@ -52,8 +59,16 @@
         <button id="newMovieModalCloser" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-
-        <form>
+        {#if responseCode === 201}
+          <div class="alert alert-success" role="alert">
+            {result}
+          </div>
+        {:else if responseCode === 400 || responseCode === 500}
+          <div class="alert alert-danger" role="alert">
+            {result}
+          </div>
+        {/if} 
+        <form on:submit={handleAdd}>
           <div class="mb-3">
             <label for="title" class="col-form-label">Title:</label>
             <input type="text" class="form-control" id="title" name="title" required bind:value={title}>
@@ -64,15 +79,15 @@
           </div>
           <div class="mb-3">
             <label for="genres" class="col-form-label">Genres:</label>
-            <TagsInput id='genres' inputClass="form-control"/>
+            <TagsInput id='genres' inputClass="form-control" on:tags={(e)=>genres=e.detail.tags}/>
           </div>
           <div class="mb-3">
             <label for="directors" class="col-form-label">Directors:</label>
-            <TagsInput id='directors' inputClass="form-control"/>
+            <TagsInput id='directors' inputClass="form-control" on:tags={(e)=>producers=e.detail.tags}/>
           </div>
           <div class="mb-3">
             <label for="producers" class="col-form-label">Producers:</label>
-            <TagsInput id='producers' inputClass="form-control"/>
+            <TagsInput id='producers' inputClass="form-control" on:tags={(e)=>directors=e.detail.tags}/>
           </div>
           <div class="mb-3">
             <label for="image" class="col-form-label">Image URL:</label>
@@ -104,5 +119,11 @@
         right: 20px; 
         color: white;
         font-size: 4rem;
+        z-index: 100;
     }
+
+    .btn.btn-primary {
+      background-color: #d63837;
+      border: #d63837;
+  }
 </style>

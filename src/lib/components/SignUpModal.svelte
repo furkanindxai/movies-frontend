@@ -8,7 +8,7 @@
 
     const user = {email, password}
     const response = await fetch("http://localhost:3000/api/v1/auth/signup", {
-      method: "POST", // or 'PUT'
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -60,3 +60,10 @@
     </div>
   </div>
 </div>
+
+<style>
+      .btn.btn-primary {
+        background-color: #d63837;
+        border: #d63837;
+    }
+</style>

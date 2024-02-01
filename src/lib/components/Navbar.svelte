@@ -5,7 +5,7 @@
     import { goto } from '$app/navigation';
 
     const handleSignOut = () => {
-      $authStore =  {email:'',token:'', userId:'', roles:'', isAuth: 0}
+      authStore.set({email:'',token:'', userId:'', roles:'', isAuth: 0})
       window.localStorage.clear()
       goto('/')
     }
@@ -14,7 +14,7 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top" data-bs-theme="dark">
   <div class="container-fluid">
     <img src='https://cdn-icons-png.flaticon.com/512/2503/2503508.png' alt='logo' style="height: 40px; padding:5px">
-    <a class="navbar-brand" href="#">MoviesDB</a>
+    <a class="navbar-brand" href="/">MoviesDB</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>

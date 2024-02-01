@@ -65,5 +65,8 @@
 </div>
 
 <style>
-  
+  .btn.btn-primary {
+    background-color: #d63837;
+    border: #d63837;
+}
 </style>
