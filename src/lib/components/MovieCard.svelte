@@ -1,5 +1,5 @@
 <script>
-  export let imageUrl ="https://pbs.twimg.com/media/FvUVt3hXgAAxP1H?format=jpg&name=900x900" ;
+  export let imageUrl;
   export let title = 'Oppenheimer';
   export let rating = 5;
   export let releaseYear = 2024;

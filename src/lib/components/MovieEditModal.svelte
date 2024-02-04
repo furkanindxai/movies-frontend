@@ -23,7 +23,7 @@
             });
         responseCode = response.status
       }
-      if (description !== '') {
+      if (description) {
         const response = await fetch(`http://localhost:3000/api/v1/movies/${id}`, {
             method: "PUT",
             headers: {

@@ -15,7 +15,7 @@
                     releaseYear={type === "rated" ? movie.Movie.releaseYear:movie.releaseYear} 
                     directors={type === "rated" ? movie.Movie.directors:movie.directors} 
                     movieId={type === "rated" ? movie.Movie.id:movie.id}
-                    rating={type === "rated" ? movie.rating :movie.averageRating} {type}/>
+                    rating={type === "rated" ? movie.rating :movie.averageRating} {type} deletedAt={movie.deletedAt}/>
 
             </li>
         {/each}

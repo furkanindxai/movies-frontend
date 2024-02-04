@@ -1,5 +1,5 @@
 <script>
-    export let imageThumbnail, title, releaseYear, directors, movieId, rating, type = "normal";
+    export let imageThumbnail, title, releaseYear, directors, movieId, rating, type = "normal", deletedAt = false;
     import authStore from "../stores/authStore.js";
     import postedStore from "../stores/postedStore.js";
     import MovieEditModal from "./MovieEditModal.svelte";
@@ -45,7 +45,7 @@
         </div>        
 
     </div>
-    {#if type === "posted"}
+    {#if type === "posted" && !deletedAt}
         <div class="row">
             <span class="material-symbols-outlined">
                 <a href="" on:click={onDelete}>
