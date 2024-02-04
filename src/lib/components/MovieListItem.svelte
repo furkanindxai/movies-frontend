@@ -2,6 +2,7 @@
     export let imageThumbnail, title, releaseYear, directors, movieId, rating, type = "normal";
     import authStore from "../stores/authStore.js";
     import postedStore from "../stores/postedStore.js";
+    import MovieEditModal from "./MovieEditModal.svelte";
     const ratingStars =  '⭐'.repeat(Math.floor(rating))
 
     const onDelete = async (e) => {
@@ -51,6 +52,12 @@
                     delete
                 </a>
             </span>
+            <span class="material-symbols-outlined" >
+                <a href="" data-bs-toggle="modal" data-bs-target={`#movieEditModal${movieId}`}>
+                    edit
+                </a>
+            </span>
+            <MovieEditModal id={movieId} />
         </div>
     {/if}
 </div>
