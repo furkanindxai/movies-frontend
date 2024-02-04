@@ -1,11 +1,11 @@
 <script>
-    export let id;
+    export let movieId;
     import { onMount } from "svelte";
     import GenreTag from "./GenreTag.svelte";
 
     let movieJSON = 0;
 	onMount(async () => {
-        const movie = await fetch(`http://localhost:3000/api/v1/movies/${id}`)
+        const movie = await fetch(`http://localhost:3000/api/v1/movies/${movieId}`)
         movieJSON = await movie.json()
 	});
 </script>

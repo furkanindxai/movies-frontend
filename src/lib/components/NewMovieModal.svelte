@@ -1,7 +1,7 @@
 <script>
   import TagsInput from "./TagsInput.svelte";
-  import authStore from "../stores/authStore"
-  import moviesStore from "../stores/moviesStore";
+  import authStore from "../stores/authStore.js"
+  import moviesStore from "../stores/moviesStore.js";
 
   let title;
   let releaseYear;
@@ -41,9 +41,9 @@
       image = '';
       imageThumbnail = '';
       description = '';
-      let updatedMovies = await fetch("http://localhost:3000/api/v1/movies/")
-      updatedMovies = await updatedMovies.json()
-      moviesStore.set(updatedMovies)
+      // let updatedMovies = await fetch("http://localhost:3000/api/v1/movies?limit=8&offset=0")
+      // updatedMovies = await updatedMovies.json()
+      // moviesStore.set(updatedMovies)
     }
   }
 

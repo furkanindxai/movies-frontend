@@ -1,7 +1,5 @@
 <script>
-    import SignUpModal from "./SignUpModal.svelte";
-    import SignInModal from "./SignInModal.svelte";
-    import authStore from "../stores/authStore";
+    import authStore from "../stores/authStore.js";
     import { goto } from '$app/navigation';
 
     const handleSignOut = () => {
@@ -31,8 +29,7 @@
       {:else if $authStore.isAuth === 1}
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a type="button" class="nav-link active" data-bs-toggle="modal" aria-current="page">My movies</a>
-
+            <a type="button" class="nav-link active" aria-current="page" href="/my-section">My section</a>
           </li>
           <li class="nav-item">
             <button type="button" class="nav-link active" aria-current="page" on:click={handleSignOut}>Sign out</button>

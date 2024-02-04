@@ -1,5 +1,5 @@
 <script>
-    import authStore from "../stores/authStore";
+    import authStore from "../stores/authStore.js";
 </script>
 <h1>
     {#if $authStore.isAuth === 1}

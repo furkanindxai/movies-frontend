@@ -1,6 +1,21 @@
+<script>
+    import { goto } from '$app/navigation';
+    import movieSearchResultsStore from "../stores/movieSearchResultsStore.js"
+
+    export let handleSearch = async (e) => {
+            if (e.key === 'Enter' && e.target.value !== '') {
+                let moviesList = await fetch(`http://localhost:3000/api/v1/movies?keyword=${e.target.value}`)
+                moviesList = await moviesList.json()
+                movieSearchResultsStore.set(moviesList)
+                goto(`/search?keyword=${e.target.value}`)
+            }
+    }
+</script>
 <div>
-    <div class="inner-div-search">
-        <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+    <div class="inner-div-search" data-bs-theme="dark">
+
+        <input class="form-control" type="search" placeholder="Search" aria-label="Search" on:keydown={handleSearch}>
+
     </div>
 </div>
 

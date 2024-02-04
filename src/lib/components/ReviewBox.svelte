@@ -1,22 +1,28 @@
 <script>
-    let rating = 0;
-    let reviewText = "";
-  
-    function submitReview() {
-      console.log("Rating:", rating);
-      console.log("Review Text:", reviewText);
+    export let movieId;
+    export let myReview;
+
+    import authStore from "../stores/authStore.js";
+    import StarRating from "./StarRating.svelte";
+
+    let responseCode = 0;
+
+    async function submitReview(e) {
+        const review = {rating: myReview.rating, review: myReview.review}
+        const response = await fetch(`http://localhost:3000/api/v1/movies/${movieId}/ratings`, {
+        method: "POST", // or 'PUT'
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${$authStore.token}`
+        },
+        body: JSON.stringify(review),
+        });
+
+        responseCode = response.status;
+        result = await response.json();
+
     }
 
-    function handleCheck(e) {
-        rating = Number(e.target.value);
-        for (let i = 1; i <= rating; i++) {
-            document.querySelector(`#star${i}`).checked = true
-        }
-        for (let i = rating+1; i <= 5; i++) {
-            document.querySelector(`#star${i}`).checked = false
-        }
-        
-    }
   </script>
   
 
@@ -24,26 +30,24 @@
   
 <div class="container"> 
 
-    <form>
+    <form on:submit={submitReview}>
+        {#if responseCode === 201}
+            <div class="alert alert-success" role="alert" data-bs-theme="dark">
+            Done!
+            </div>
+        {:else if responseCode >= 400}
+            <div class="alert alert-danger h" role="alert" data-bs-theme="dark">
+            Failed!
+            </div>
+        {/if} 
         <div class="mb-3">
         <label class="form-label">Rating:</label>
-        <div class="stars">
-            <input type="checkbox" id="star1" name="rating" value="1" on:click={handleCheck}/>
-            <label for="star1"></label>
-            <input type="checkbox" id="star2" name="rating" value="2" on:click={handleCheck}/>
-            <label for="star2"></label>
-            <input type="checkbox" id="star3" name="rating" value="3" on:click={handleCheck}/>
-            <label for="star3"></label>
-            <input type="checkbox" id="star4" name="rating" value="4" on:click={handleCheck}/>
-            <label for="star4"></label>
-            <input type="checkbox" id="star5" name="rating" value="5" on:click={handleCheck}/>
-            <label for="star5"></label>
-        </div>
+        <StarRating bind:rating={myReview.rating}/>
         </div>
     
         <div class="mb-3">
-        <label class="form-label">Review Text:</label>
-            <textarea class="form-control" rows="3" bind:value={reviewText} data-bs-theme="dark"></textarea>
+        <label class="form-label">Review:</label>
+            <textarea class="form-control" rows="3" bind:value={myReview.review} data-bs-theme="dark"></textarea>
         </div>
     
         <button type="button" class="btn btn-primary" on:click={submitReview}>Post</button>
@@ -56,34 +60,6 @@
     .btn.btn-primary {
         background-color: #d63837;
         border: #d63837;
-    }
-    .stars {
-        display: inline-block;
-    }
-
-    .stars input {
-        display: none;
-    }
-
-    .stars label {
-        font-size: 24px;
-        cursor: pointer;
-        color: #D3D3D3;
-
-    }
-
-    .stars label:before {
-        content: '\2605';
-        display: block;
-    }
-
-    .stars input:checked ~ label {
-        color: #ffac00;
-    }
-
-    .stars input:not(:checked) ~ label {
-        color: #D3D3D3;
-
     }
 
     .container {
@@ -103,6 +79,3 @@
         color: white;
     }
 </style>
-
-
-    

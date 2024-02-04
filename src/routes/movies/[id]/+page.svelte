@@ -1,9 +1,12 @@
 <script>
     import { page } from '$app/stores';
     import MovieDetails from '../../../lib/components/MovieDetails.svelte';    
-    import ReviewBox from '../../../lib/components/ReviewBox.svelte';    
-    let id = $page.params.id;
+    import Reviews from '../../../lib/components/Reviews.svelte';
+    import SearchBox from "../../../lib/components/SearchBox.svelte"
+
+    let movieId = $page.params.id;
 
 </script>
-<MovieDetails {id} />
-<ReviewBox />
+<SearchBox />
+<MovieDetails {movieId} />
+<Reviews movieId={movieId}/>

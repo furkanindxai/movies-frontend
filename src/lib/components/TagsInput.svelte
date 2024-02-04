@@ -1,8 +1,9 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
     
-    export let id;
+    export let id ='';
     export let inputClass;
+    export let placeholder = ''
     let tags = []
 
     const dispatch = createEventDispatcher();
@@ -17,10 +18,11 @@
         {
             e.preventDefault();
             const tagContent = e.target.value.trim().toLowerCase()
-            if (tagContent !== '' && !tags.includes(tagContent)) {
+            if (tagContent !== '' && !(tags.includes(tagContent))) {
                 tags = [...tags, tagContent]
                 e.target.value = ''
             }
+
             handleTagChange()
             
         }
@@ -35,14 +37,14 @@
     }
 </script>
 
-<input type="text" class={inputClass} id={id} name={id} on:keydown={(e)=>handleKeydown(e)}>
+<input type="text" class={inputClass} id={id} name={id} on:keydown={(e)=>handleKeydown(e)} placeholder={placeholder}  {...$$restProps}>
 {#if tags.length > 0}
     <div class="tags-input">
         <ul>
                 {#each tags as tag (tag)}
                     <li style="color: white;">
                         {tag}
-                        <button class="delete-button" on:click={(e)=>handleDelete(e,tag)}>X</button>
+                        <a class="delete-button" on:click={(e)=>handleDelete(e,tag)}>X</a>
                     </li>
                 {/each}
         
@@ -83,5 +85,10 @@
         color: #999; 
         cursor: pointer; 
         margin-left: 5px; 
+        text-decoration: none;
     } 
+
+    ::placeholder {
+        color: #B4B4B8;
+    }
 </style> 
