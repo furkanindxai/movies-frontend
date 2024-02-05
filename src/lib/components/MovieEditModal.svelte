@@ -72,15 +72,15 @@
           <form on:submit={handleUpdate}>
             <div class="mb-3">
               <label for="image" class="col-form-label">Image:</label>
-              <input type="text" class="form-control" id="image" name="image" bind:value={image} >
+              <input type="text" class="form-control"  name="image" bind:value={image} >
             </div>
             <div class="mb-3">
               <label for="thumbnail" class="col-form-label">Image Thumbnail:</label>
-              <input type="text" class="form-control" id="thumbnail" name="thumbnail" bind:value={imageThumbnail} >
+              <input type="text" class="form-control"  name="thumbnail" bind:value={imageThumbnail} >
             </div>
             <div class="mb-3">
               <label for="description" class="col-form-label">Description:</label>
-              <input type="textArea" class="form-control" id="description" name="description" bind:value={description} >
+              <input type="textArea" class="form-control"  name="description" bind:value={description} >
             </div>
            
             <button type="submit" class="btn btn-primary">Update</button>

@@ -22,7 +22,8 @@
             
             moviesList = await moviesList.json()
             movieSearchResultsStore.set(moviesList)
-            goto(`/search${url.substring(35)}`)
+            // goto(`/search${url.substring(35)}`)
+            goto(`/search`)
         
         }
         

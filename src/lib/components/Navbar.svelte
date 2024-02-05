@@ -28,14 +28,15 @@
         </ul>
       {:else if $authStore.isAuth === 1}
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          
+          <li class="nav-item">
+            <a type="button" class="nav-link active" aria-current="page" href="/my-section">My section</a>
+          </li>
           {#if $authStore.roles.includes("admin")}
             <li class="nav-item">
               <a type="button" class="nav-link active" aria-current="page" href="/admin">Admin</a>
             </li>
           {/if}
-          <li class="nav-item">
-            <a type="button" class="nav-link active" aria-current="page" href="/my-section">My section</a>
-          </li>
           <li class="nav-item">
             <button type="button" class="nav-link active" aria-current="page" on:click={handleSignOut}>Sign out</button>
 

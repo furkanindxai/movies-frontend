@@ -11,7 +11,8 @@
                 })
                 moviesList = await moviesList.json()
                 movieSearchResultsStore.set(moviesList)
-                goto(`/search?keyword=${e.target.value}`)
+                // goto(`/search?keyword=${e.target.value}`)
+                goto(`/search`)
             }
     }
 </script>

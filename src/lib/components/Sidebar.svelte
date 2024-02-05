@@ -1,53 +1,73 @@
-<div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
-    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-      <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
-      <span class="fs-4">Sidebar</span>
-    </a>
-    <hr>
-    <ul class="nav nav-pills flex-column mb-auto">
-      <li class="nav-item">
-        <a href="#" class="nav-link active" aria-current="page">
-          <svg class="bi me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
-          Home
-        </a>
-      </li>
-      <li>
-        <a href="#" class="nav-link text-white">
-          <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
-          Dashboard
-        </a>
-      </li>
-      <li>
-        <a href="#" class="nav-link text-white">
-          <svg class="bi me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
-          Orders
-        </a>
-      </li>
-      <li>
-        <a href="#" class="nav-link text-white">
-          <svg class="bi me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
-          Products
-        </a>
-      </li>
-      <li>
-        <a href="#" class="nav-link text-white">
-          <svg class="bi me-2" width="16" height="16"><use xlink:href="#people-circle"></use></svg>
-          Customers
-        </a>
-      </li>
-    </ul>
-    <hr>
-    <div class="dropdown">
-      <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
-        <strong>mdo</strong>
+<script>
+  export let selected = "Users", fields = [], data = [];
+  import authStore from "../stores/authStore";
+  
+  const onClick = async (e) => {
+    selected = e.target.text;
+    let url = `http://localhost:3000/api/v1/${selected === "Users" ? 
+    "users" : (selected === "Movies" ? "movies" : "ratings")}`
+    let response = await fetch(url,{
+        headers: {
+            "Authorization": `Bearer ${$authStore.token}`
+        }
+    })
+    data = await response.json()
+    if (data.length > 0) {
+      fields = Object.keys(data[0])
+      fields = [...fields, "action"]
+      const newData = data.map(el=>{
+          if (el.deletedAt) {
+            el.action = "Restore"
+          }
+          else {
+            el.action = "Delete"
+          }
+          return el
+      })
+      data = newData
+      if (selected === "Movies") {
+        fields = fields.filter(field=> field !== "image" && field !== "imageThumbnail" && field !== "description")
+        data.map(el=>{
+          delete el.imageThumbnail
+          delete el.image
+          delete el.description
+          return el
+        })
+        data = data
+
+      }
+    }
+    
+  }
+</script>
+
+<div class="d-flex flex-column flex-shrink-0 p-3 text-white" style="width: 220px;">
+  <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+    <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+    <span class="fs-4">Sidebar</span>
+  </a>
+  <hr>
+  <ul class="nav nav-pills flex-column mb-auto">
+    <li class="nav-item">
+      <a href="#" class={`nav-link ${selected === "Users" ? "active" : "text-white"}`} on:click={onClick}>
+        Users
       </a>
-      <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-        <li><a class="dropdown-item" href="#">New project...</a></li>
-        <li><a class="dropdown-item" href="#">Settings</a></li>
-        <li><a class="dropdown-item" href="#">Profile</a></li>
-        <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="#">Sign out</a></li>
-      </ul>
-    </div>
-  </div>
+    </li>
+    <li>
+      <a href="#" class={`nav-link ${selected === "Movies" ? "active" : "text-white"}`} on:click={onClick}>
+        Movies
+      </a>
+    </li>
+    <li>
+      <a href="#" class={`nav-link ${selected === "Ratings" ? "active" : "text-white"}`} on:click={onClick}>
+        Ratings
+      </a>
+    </li>
+  </ul>
+</div>
+
+<style>
+  .nav-link.active {
+    background-color: #d63837;
+  }
+</style>

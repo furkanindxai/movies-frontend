@@ -11,7 +11,11 @@
         review: ''
     };
     onMount(async () => {
-        const ratings = await fetch(`http://localhost:3000/api/v1/movies/${movieId}/ratings`)
+        const ratings = await fetch(`http://localhost:3000/api/v1/movies/${movieId}/ratings`,{
+            headers: {
+                    "Authorization": $authStore.roles.includes("admin") ? `Bearer ${$authStore.token}` : undefined
+            }
+        })
         otherReviews = await ratings.json()
         myReview = otherReviews.find(rating => rating.userId === $authStore.id)
         if (!myReview) myReview = {
