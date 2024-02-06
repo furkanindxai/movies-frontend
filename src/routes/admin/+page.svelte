@@ -6,35 +6,49 @@
     import { onMount } from 'svelte';
     import Table from "../../lib/components/Table.svelte";
     import Sidebar from "../../lib/components/Sidebar.svelte"
-    let selected, fields = [], data = [];    
+    let selected = "Users", fields = [], data = [], limit = 14, offset = 0;    
+    
+    const generateTable = async () => {
+      if (data.length > 0) {
+        fields = [...Object.keys(data[0]), "action"]
+        const newData = data.map(el=>{
+            if (el.deletedAt) {
+              el.action = "Restore"
+            }
+            else {
+              el.action = "Delete"
+            }
+            return el
+        })
+
+        data = newData
+        if (selected === "Movies") {
+          fields = fields.filter(field=> field !== "image" && field !== "imageThumbnail" && field !== "description")
+          data.map(el=>{
+            delete el.imageThumbnail
+            delete el.image
+            delete el.description
+            return el
+          })
+          data = data
+
+        }
+
+      }
+    }
 
     onMount(async() => {
       if ($authStore.isAuth === 0 || !$authStore.roles.includes("admin")) goto("/")
       else {
-          let response = await fetch(`http://localhost:3000/api/v1/users`,{
+          let response = await fetch(`http://localhost:3000/api/v1/users?limit=14&offset=0`,{
           headers: {
               "Authorization": `Bearer ${$authStore.token}`
           }
           })
           data = await response.json()
-          
-          if (data.length > 0) {
-            fields = [...Object.keys(data[0]), "action"]
-            
-          }
-          const newData = data.map(el=>{
-              if (el.deletedAt) {
-                el.action = "Restore"
-              }
-              else {
-                el.action = "Delete"
-              }
-              return el
-          })
-          data = newData
 
-        }
-
+          await generateTable(response)
+      }
   })
 </script>
 
@@ -63,10 +77,10 @@
   
   <div>
     <div class="sidebar">
-      <Sidebar bind:selected={selected} bind:fields={fields} bind:data={data}/>
+      <Sidebar bind:selected={selected} bind:fields={fields} bind:data={data} bind:offset={offset}/>
     </div>
     <div class="table">
-      <Table {fields} bind:data={data} {selected}/>
+      <Table {fields} bind:data={data} {selected} bind:offset={offset} {limit}/>
     </div>
   </div>
   

@@ -1,13 +1,70 @@
 <script>
-    export let fields = [], data = [], selected="Users";
+    export let fields = [], data = [], selected="Users", limit, offset;
 
     import authStore from "../stores/authStore";
+
+    const getMoreOfX = async (e) => {
+      e.preventDefault()
+      if (e.target.text === "Next") offset += 14
+      else {
+        if (offset - 14 < 0) offset = 0
+        else offset = offset - 14
+      }
+      
+      let url = `http://localhost:3000/api/v1/${selected === "Users" ? 
+      "users" : (selected === "Movies" ? "movies" : "ratings")}?limit=${limit}&offset=${offset}`
+      let response = await fetch(url,{
+          headers: {
+              "Authorization": `Bearer ${$authStore.token}`
+          }
+          })
+      
+      let resData = await response.json()
+      if (resData.length > 0) {
+
+        data = resData.length > 0 ? resData : data
+  
+        await generateTable(response) 
+      }
+      else {
+        offset = offset - 14
+      }
+     
+    }
+
+
+    const generateTable = async () => {
+      if (data.length > 0) {
+        fields = [...Object.keys(data[0]), "action"]
+        const newData = data.map(el=>{
+            if (el.deletedAt) {
+              el.action = "Restore"
+            }
+            else {
+              el.action = "Delete"
+            }
+            return el
+        })
+
+        data = newData
+        if (selected === "Movies") {
+          fields = fields.filter(field=> field !== "image" && field !== "imageThumbnail" && field !== "description")
+          data.map(el=>{
+            delete el.imageThumbnail
+            delete el.image
+            delete el.description
+            return el
+          })
+          data = data
+
+        }
+
+      }
+    }
 
     const onAction = async (e, detail, i, selected) => {
       e.preventDefault()
       let url = '';
-      let newData = []
-      let newFields;
       if (detail === "Delete") {
         url = `http://localhost:3000/api/v1/${selected.toLowerCase()}/${i}`
         
@@ -24,38 +81,13 @@
           
       })
       if (response.status === 204) {
-        let response = await fetch(`http://localhost:3000/api/v1/${selected.toLowerCase()}`,{
+        let response = await fetch(`http://localhost:3000/api/v1/${selected.toLowerCase()}?limit=${limit}&offset=${offset}`,{
           headers: {
               "Authorization": `Bearer ${$authStore.token}`
           }
         })
-        newData = await response.json()
-        
-        if (newData.length > 0) {
-          newFields = [...Object.keys(newData[0]), "action"]
-        }
-        newData = newData.map(el=>{
-            if (el.deletedAt) {
-              el.action = "Restore"
-            }
-            else {
-              el.action = "Delete"
-            }
-            return el
-        })
-      if (selected === "Movies") {
-        newFields = newFields.filter(field=> field !== "image" && field !== "imageThumbnail" && field !== "description")
-        newData.map(el=>{
-          delete el.imageThumbnail
-          delete el.image
-          delete el.description
-          return el
-        })
-
-        
-      }
-      fields = newFields
-      data = newData
+        data = await response.json()
+        await generateTable(response)
       
     }
   }
@@ -87,6 +119,14 @@
         </tr>  
       {/each}
     </tbody>
+    <tfoot>
+      {#if offset > 0}
+        <a href="" on:click={e=>getMoreOfX(e)}>Prev</a>
+      {/if}
+      {#if data.length === 14}
+        <a href="" on:click={e=>getMoreOfX(e)}>Next</a>
+      {/if}
+    </tfoot>
   </table>
 
 

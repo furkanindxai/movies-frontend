@@ -1,7 +1,7 @@
 <script>
     export let rating;
     export let review;
-    export let poster;
+    export let poster = "(anonymous)";
     const ratingStars = '⭐'.repeat(rating)
 
 </script>
