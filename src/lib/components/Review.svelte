@@ -1,19 +1,28 @@
 <script>
     export let rating;
     export let review;
+    export let id;
     export let poster = "(anonymous)";
     const ratingStars = '⭐'.repeat(rating)
 
+    import authStore from "../stores/authStore";
 </script>
 
 <div class="container">
+    {#if $authStore.roles.includes("admin")}
+        <p>
+            Review ID: {id}
+        </p>
+    {/if}
     <h5>
         User {poster}
     </h5>
     <div>
         {ratingStars}
     </div>
-    {review}
+    {#if review}
+        {review}
+    {/if}
 </div>
 
 <style>

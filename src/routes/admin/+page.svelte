@@ -1,6 +1,4 @@
 <script>
-    import { page } from '$app/stores';
-    import { navigating } from '$app/stores';
     import { goto } from '$app/navigation';
     import authStore from '../../lib/stores/authStore';
     import { onMount } from 'svelte';
@@ -23,7 +21,8 @@
 
         data = newData
         if (selected === "Movies") {
-          fields = fields.filter(field=> field !== "image" && field !== "imageThumbnail" && field !== "description")
+          const newFields = fields.filter(field=> field !== "image" && field !== "imageThumbnail" && field !== "description")
+          fields = newFields
           data.map(el=>{
             delete el.imageThumbnail
             delete el.image

@@ -18,7 +18,8 @@
 
         data = newData
         if (selected === "Movies") {
-          fields = fields.filter(field=> field !== "image" && field !== "imageThumbnail" && field !== "description")
+          const newFields = fields.filter(field=> field !== "image" && field !== "imageThumbnail" && field !== "description")
+          fields = newFields
           data.map(el=>{
             delete el.imageThumbnail
             delete el.image

@@ -33,7 +33,7 @@
     <form on:submit={submitReview}>
         {#if responseCode === 201}
             <div class="alert alert-success" role="alert" data-bs-theme="dark">
-            Done!
+            Posted!
             </div>
         {:else if responseCode >= 400}
             <div class="alert alert-danger h" role="alert" data-bs-theme="dark">

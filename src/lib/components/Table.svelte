@@ -48,7 +48,8 @@
 
         data = newData
         if (selected === "Movies") {
-          fields = fields.filter(field=> field !== "image" && field !== "imageThumbnail" && field !== "description")
+          const newFields = fields.filter(field=> field !== "image" && field !== "imageThumbnail" && field !== "description")
+          fields = newFields
           data.map(el=>{
             delete el.imageThumbnail
             delete el.image
@@ -110,8 +111,10 @@
           <!-- <th scope="row">{movie}</th> -->
           {#each Object.values(el) as detail}
             {#if detail === "Delete"}
-              <button type="button" class="btn btn-danger" style="background-color:#bb2d3b;" on:click={e=>onAction(e,detail,el.id, selected)}>{detail}</button>
-            {:else if detail === "Restore"} <button type="button" class="btn btn-success" style="background-color:#157347;" on:click={e=>onAction(e,detail,el.id, selected)}>{detail}</button>
+              <button type="button" class="btn btn-danger" style="background-color:#bb2d3b;" 
+              on:click={e=>onAction(e,detail,el.id, selected)}>{detail}</button>
+            {:else if detail === "Restore"} <button type="button" class="btn btn-success"
+             style="background-color:#157347;" on:click={e=>onAction(e,detail,el.id, selected)}>{detail}</button>
             {:else}
               <td>{detail}</td>
             {/if}

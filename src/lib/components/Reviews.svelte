@@ -34,7 +34,7 @@
     <h4 class="review-heading">Other reviews:</h4>
 
     {#each otherReviews as review}
-        <Review rating={review.rating} review={review.review} poster={review.userId}/>
+        <Review rating={review.rating} review={review.review} poster={review.userId} id={review.id}/>
     {/each}
 {/if}
 
