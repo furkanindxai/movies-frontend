@@ -95,14 +95,18 @@
 
   const handleSearch = async (e) => {
     if (e.key === 'Enter' && e.target.value !== '') {
-      offset = 0;
-      let moviesList = await fetch(`http://localhost:3000/api/v1/${selected}?keyword=${e.target.value}&limit=${limit}&deleted=${deleted}`, {
-          headers: {
-          "Authorization": `Bearer ${$authStore.token}`
-      }
-      })
-      data = await moviesList.json()
-      await generateTable()
+    offset = 0;
+    let url = (selected.toLowerCase() === 'movies' || selected.toLowerCase() === 'users') ?
+       `http://localhost:3000/api/v1/${selected.toLowerCase()}?keyword=${e.target.value}&limit=${limit}&deleted=${deleted}`:
+       `http://localhost:3000/api/v1/${selected.toLowerCase()}/${keyword}`
+    let moviesList = await fetch(url, {
+        headers: {
+        "Authorization": `Bearer ${$authStore.token}`
+    }
+    })
+    data = await moviesList.json()
+    if (!Array.isArray(data)) data = [data]
+    await generateTable()
     }
   }
 </script>
@@ -111,7 +115,7 @@
 <table class="table" data-bs-theme="dark">
     <thead>
       <tr>
-        <input type="text" placeholder="Search" class="admin-search" bind:value={keyword} on:keydown={e=>handleSearch(e)}>
+        <input type="text" placeholder={selected === "Ratings" ? "ID" : "Search"} class="admin-search" bind:value={keyword} on:keydown={e=>handleSearch(e)}>
       </tr>
       <tr>
         {#each fields as field (field)}
