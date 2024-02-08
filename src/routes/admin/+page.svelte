@@ -4,7 +4,7 @@
     import { onMount } from 'svelte';
     import Table from "../../lib/components/Table.svelte";
     import Sidebar from "../../lib/components/Sidebar.svelte"
-    let selected = "Users", fields = [], data = [], limit = 14, offset = 0;    
+    let selected = "Users", fields = [], data = [], limit = 14, offset = 0, keyword = "", deleted;    
     
     const generateTable = async () => {
       if (data.length > 0) {
@@ -46,7 +46,7 @@
           })
           data = await response.json()
 
-          await generateTable(response)
+          await generateTable()
       }
   })
 </script>
@@ -54,6 +54,7 @@
 <style>
     div {
       display: flex;
+      background-color: #212529;
     }
   
     /* Style for the Sidebar */
@@ -76,10 +77,10 @@
   
   <div>
     <div class="sidebar">
-      <Sidebar bind:selected={selected} bind:fields={fields} bind:data={data} bind:offset={offset}/>
+      <Sidebar bind:selected={selected} bind:fields={fields} bind:data={data} bind:offset={offset} bind:keyword={keyword} bind:deleted={deleted} {limit}/>
     </div>
     <div class="table">
-      <Table {fields} bind:data={data} {selected} bind:offset={offset} {limit}/>
+      <Table {fields} bind:data={data} {selected} bind:offset={offset} {limit} bind:keyword={keyword} bind:deleted={deleted}/>
     </div>
   </div>
   

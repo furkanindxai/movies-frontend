@@ -1,7 +1,9 @@
 <script>
-  export let selected = "Users", fields = [], data = [], offset;
+  export let selected = "Users", fields = [], data = [], offset, keyword, deleted, limit;
   import authStore from "../stores/authStore";
   
+  let trueChecked = false;
+  let falseChecked = false;
 
   const generateTable = async () => {
       if (data.length > 0) {
@@ -35,7 +37,11 @@
 
   const onClick = async (e) => {
     selected = e.target.text;
+    keyword = '';
     offset = 0;
+    deleted = ''
+    trueChecked = false;
+    falseChecked =false;
     let url = `http://localhost:3000/api/v1/${selected === "Users" ? 
     "users" : (selected === "Movies" ? "movies" : "ratings")}?limit=14&offset=0`
     let response = await fetch(url,{
@@ -44,8 +50,32 @@
         }
     })
     data = await response.json()
-    await generateTable(response)
+    await generateTable()
     
+  }
+
+  const onCheckboxChange = async (e) => {
+    e.preventDefault()
+    if (trueChecked && falseChecked || !trueChecked && !falseChecked) deleted = ''
+    else if (trueChecked && !falseChecked) deleted ='true'
+    else if (!trueChecked && falseChecked) deleted ='false'
+    let url = `http://localhost:3000/api/v1/${selected.toLocaleLowerCase()}?limit=${limit}&offset=${offset}&keyword=${keyword}&deleted=${deleted}`
+    let response = await fetch(url,{
+          headers: {
+              "Authorization": `Bearer ${$authStore.token}`
+          }
+    })
+      
+    let resData = await response.json()
+    if (resData.length > 0) {
+
+      data = resData
+
+      await generateTable() 
+    }
+
+
+
   }
 </script>
 
@@ -71,7 +101,17 @@
         Ratings
       </a>
     </li>
+    <li class="text-white">
+    </li>
   </ul>
+  <div class="admin-control">
+    Deleted
+    <br>
+    True
+    <input type="checkbox" bind:checked={trueChecked} on:change={onCheckboxChange}>
+    False
+    <input type="checkbox" bind:checked={falseChecked} on:change={onCheckboxChange}>
+  </div>
 </div>
 
 <style>
@@ -81,5 +121,9 @@
 
   a {
       color: white;
-    }
+  }
+
+  .admin-control {
+    margin-top: 50px;
+  }
 </style>

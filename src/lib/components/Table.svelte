@@ -1,9 +1,9 @@
 <script>
-    export let fields = [], data = [], selected="Users", limit, offset;
+    export let fields = [], data = [], selected="Users", limit, offset, keyword, deleted;
 
     import authStore from "../stores/authStore";
 
-    const getMoreOfX = async (e) => {
+    const handleLoad = async (e) => {
       e.preventDefault()
       if (e.target.text === "Next") offset += 14
       else {
@@ -12,19 +12,19 @@
       }
       
       let url = `http://localhost:3000/api/v1/${selected === "Users" ? 
-      "users" : (selected === "Movies" ? "movies" : "ratings")}?limit=${limit}&offset=${offset}`
+      "users" : (selected === "Movies" ? "movies" : "ratings")}?limit=${limit}&offset=${offset}&keyword=${keyword}&deleted=${deleted}`
       let response = await fetch(url,{
           headers: {
               "Authorization": `Bearer ${$authStore.token}`
           }
-          })
+      })
       
       let resData = await response.json()
       if (resData.length > 0) {
 
-        data = resData.length > 0 ? resData : data
+        data = resData
   
-        await generateTable(response) 
+        await generateTable() 
       }
       else {
         offset = offset - 14
@@ -73,7 +73,7 @@
       else if (detail === "Restore") {
         url = `http://localhost:3000/api/v1/${selected.toLowerCase()}/restore/${i}`
       }
-
+      console.log(url)
       let response = await fetch(`${url}`,{
           method: detail === "Delete" ? "DELETE" : "PATCH",
           headers: {
@@ -82,14 +82,27 @@
           
       })
       if (response.status === 204) {
-        let response = await fetch(`http://localhost:3000/api/v1/${selected.toLowerCase()}?limit=${limit}&offset=${offset}`,{
+        let response = await fetch(`http://localhost:3000/api/v1/${selected.toLowerCase()}?limit=${limit}&offset=${offset}&keyword=${keyword}&deleted=${deleted}`,{
           headers: {
               "Authorization": `Bearer ${$authStore.token}`
           }
         })
         data = await response.json()
-        await generateTable(response)
+        await generateTable()
       
+    }
+  }
+
+  const handleSearch = async (e) => {
+    if (e.key === 'Enter' && e.target.value !== '') {
+      offset = 0;
+      let moviesList = await fetch(`http://localhost:3000/api/v1/${selected}?keyword=${e.target.value}&limit=${limit}&deleted=${deleted}`, {
+          headers: {
+          "Authorization": `Bearer ${$authStore.token}`
+      }
+      })
+      data = await moviesList.json()
+      await generateTable()
     }
   }
 </script>
@@ -97,6 +110,9 @@
 
 <table class="table" data-bs-theme="dark">
     <thead>
+      <tr>
+        <input type="text" placeholder="Search" class="admin-search" bind:value={keyword} on:keydown={e=>handleSearch(e)}>
+      </tr>
       <tr>
         {#each fields as field (field)}
           <th scope="col">{field}</th>
@@ -124,15 +140,28 @@
     </tbody>
     <tfoot>
       {#if offset > 0}
-        <a href="" on:click={e=>getMoreOfX(e)}>Prev</a>
+        <a href="" on:click={e=>handleLoad(e)}>Prev</a>
       {/if}
       {#if data.length === 14}
-        <a href="" on:click={e=>getMoreOfX(e)}>Next</a>
+        <a href="" on:click={e=>handleLoad(e)}>Next</a>
       {/if}
     </tfoot>
   </table>
 
 
 <style>
-
+  .admin-search {
+    margin: 5px;
+    border: none;
+    width: 120px;
+  }
+  input:focus{
+    border: none;
+    outline: none;
+    color: #afafb3;
+  }
+  ::placeholder {
+    color: #afafb3;
+  }
+  
 </style>
