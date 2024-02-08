@@ -56,6 +56,7 @@
 
   const onCheckboxChange = async (e) => {
     e.preventDefault()
+    offset = 0;
     if (trueChecked && falseChecked || !trueChecked && !falseChecked) deleted = ''
     else if (trueChecked && !falseChecked) deleted ='true'
     else if (!trueChecked && falseChecked) deleted ='false'
