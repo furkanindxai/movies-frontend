@@ -77,10 +77,12 @@
   
   <div>
     <div class="sidebar">
-      <Sidebar bind:selected={selected} bind:fields={fields} bind:data={data} bind:offset={offset} bind:keyword={keyword} bind:deleted={deleted} {limit}/>
+      <Sidebar bind:selected={selected} bind:fields={fields} bind:data={data} bind:offset={offset}
+       bind:keyword={keyword} bind:deleted={deleted} {limit}/>
     </div>
     <div class="table">
-      <Table {fields} bind:data={data} {selected} bind:offset={offset} {limit} bind:keyword={keyword} bind:deleted={deleted}/>
+      <Table {fields} bind:data={data} {selected} bind:offset={offset} {limit} bind:keyword={keyword} 
+      bind:deleted={deleted}/>
     </div>
   </div>
   

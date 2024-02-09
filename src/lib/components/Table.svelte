@@ -73,7 +73,6 @@
       else if (detail === "Restore") {
         url = `http://localhost:3000/api/v1/${selected.toLowerCase()}/restore/${i}`
       }
-      console.log(url)
       let response = await fetch(`${url}`,{
           method: detail === "Delete" ? "DELETE" : "PATCH",
           headers: {
@@ -128,13 +127,17 @@
       
       {#each data as el (el.id)}
         <tr>
-          <!-- <th scope="row">{movie}</th> -->
           {#each Object.values(el) as detail}
             {#if detail === "Delete"}
-              <button type="button" class="btn btn-danger" style="background-color:#bb2d3b;" 
-              on:click={e=>onAction(e,detail,el.id, selected)}>{detail}</button>
-            {:else if detail === "Restore"} <button type="button" class="btn btn-success"
-             style="background-color:#157347;" on:click={e=>onAction(e,detail,el.id, selected)}>{detail}</button>
+              <td>
+                <button type="button" class="btn btn-danger" style="background-color:#bb2d3b;" 
+                on:click={e=>onAction(e,detail,el.id, selected)}>{detail}</button>
+              </td>
+            {:else if detail === "Restore"} 
+            <td>
+              <button type="button" class="btn btn-success"
+               style="background-color:#157347;" on:click={e=>onAction(e,detail,el.id, selected)}>{detail}</button>
+            </td>
             {:else}
               <td>{detail}</td>
             {/if}
