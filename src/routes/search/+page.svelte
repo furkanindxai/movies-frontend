@@ -1,8 +1,8 @@
 <script>
-    import MovieList from "../../lib/components/MovieList.svelte";
+    import MovieList from "../../lib/components/Movies/MovieList.svelte"
     import movieSearchResultsStore from "../../lib/stores/movieSearchResultsStore.js"
     import { page } from '$app/stores';  
-    import AdvancedSearch from "../../lib/components/AdvancedSearch.svelte";
+    import AdvancedSearch from "../../lib/components/Search/AdvancedSearch.svelte";
 
     
 </script>

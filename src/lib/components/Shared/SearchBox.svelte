@@ -1,7 +1,7 @@
 <script>
     import { goto } from '$app/navigation';
-    import movieSearchResultsStore from "../stores/movieSearchResultsStore.js"
-    import authStore from '../stores/authStore.js';
+    import movieSearchResultsStore from "../../stores/movieSearchResultsStore.js"
+    import authStore from '../../stores/authStore.js';
     export let handleSearch = async (e) => {
             if (e.key === 'Enter' && e.target.value !== '') {
                 let moviesList = await fetch(`http://localhost:3000/api/v1/movies?keyword=${e.target.value}`, {

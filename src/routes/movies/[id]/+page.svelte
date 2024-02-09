@@ -1,9 +1,8 @@
 <script>
     import { page } from '$app/stores';
-    import MovieDetails from '../../../lib/components/MovieDetails.svelte';    
-    import Reviews from '../../../lib/components/Reviews.svelte';
-    import SearchBox from "../../../lib/components/SearchBox.svelte"
-
+    import MovieDetails from "../../../lib/components/Movies/MovieDetails.svelte"
+    import Reviews from '../../../lib/components/Movies/Reviews/Reviews.svelte'
+    import SearchBox from '../../../lib/components/Shared/SearchBox.svelte';
     let movieId = $page.params.id;
 
 </script>

@@ -1,7 +1,7 @@
 <script>
     export let fields = [], data = [], selected="Users", limit, offset, keyword, deleted;
 
-    import authStore from "../stores/authStore";
+    import authStore from "../../stores/authStore";
 
     const handleLoad = async (e) => {
       e.preventDefault()

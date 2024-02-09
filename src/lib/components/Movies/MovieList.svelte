@@ -2,7 +2,7 @@
     export let movies = []
     export let type = "normal"
     import MovieListItem from "./MovieListItem.svelte";
-    import postedStore from "../stores/postedStore.js";
+    import postedStore from "../../stores/postedStore.js";
 </script>
 
 <ul>

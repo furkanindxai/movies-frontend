@@ -1,7 +1,7 @@
 <script>
     export let imageThumbnail, title, releaseYear, directors, movieId, rating, type = "normal", deletedAt = false;
-    import authStore from "../stores/authStore.js";
-    import postedStore from "../stores/postedStore.js";
+    import authStore from "../../stores/authStore.js";
+    import postedStore from "../../stores/postedStore.js";
     import MovieEditModal from "./MovieEditModal.svelte";
     const ratingStars =  '⭐'.repeat(Math.floor(rating))
 

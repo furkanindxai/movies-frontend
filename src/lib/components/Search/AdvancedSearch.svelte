@@ -1,10 +1,10 @@
 <script>
-    import SearchBox from "./SearchBox.svelte";
-    import TagsInput from "./TagsInput.svelte";
+    import SearchBox from "../Shared/SearchBox.svelte";
+    import TagsInput from "../Shared/TagsInput.svelte";
     import Dropdown from "./Dropdown.svelte";
     import { goto } from '$app/navigation';
-    import authStore from "../stores/authStore.js"
-    import movieSearchResultsStore from "../stores/movieSearchResultsStore.js";
+    import authStore from "../../stores/authStore.js"
+    import movieSearchResultsStore from "../../stores/movieSearchResultsStore.js";
 
     let genres = []
     let deleted, order, sortBy;

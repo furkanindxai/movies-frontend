@@ -1,6 +1,6 @@
 <script>
-    import authStore from "../stores/authStore";
-    import postedStore from "../stores/postedStore";
+    import authStore from "../../stores/authStore";
+    import postedStore from "../../stores/postedStore";
     let imageThumbnail;
     let image;
     let description;

@@ -1,6 +1,6 @@
 <script>
     export let movieId;
-    import authStore from "../stores/authStore.js";
+    import authStore from "../../../stores/authStore";
     import ReviewBox from "./ReviewBox.svelte";
     import Review from "./Review.svelte";
     import {onMount} from "svelte"

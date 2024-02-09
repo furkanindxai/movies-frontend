@@ -1,5 +1,5 @@
 <script>
-    import Tabs from "../../lib/components/Tabs.svelte";
+    import Tabs from "../../lib/components/MySection/Tabs.svelte";
     import {onMount} from "svelte"
     import authStore from "../../lib/stores/authStore";
     import postedStore from "../../lib/stores/postedStore.js"

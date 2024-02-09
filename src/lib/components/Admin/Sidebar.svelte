@@ -1,6 +1,6 @@
 <script>
   export let selected = "Users", fields = [], data = [], offset, keyword, deleted, limit;
-  import authStore from "../stores/authStore";
+  import authStore from "../../stores/authStore";
   
   let trueChecked = false;
   let falseChecked = false;

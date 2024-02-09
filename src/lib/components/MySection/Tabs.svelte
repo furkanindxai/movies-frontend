@@ -1,5 +1,5 @@
 <script>
-    import MovieList from "../components/MovieList.svelte"
+    import MovieList from "../Movies/MovieList.svelte"
     import Settings from "./Settings.svelte";
     export let userRatedMovies;
 </script>

@@ -1,7 +1,7 @@
 <script>
-  import TagsInput from "./TagsInput.svelte";
-  import authStore from "../stores/authStore.js"
-  import moviesStore from "../stores/moviesStore.js";
+  import TagsInput from "../Shared/TagsInput.svelte"
+  import authStore from "../../stores/authStore"
+  import moviesStore from "../../stores/moviesStore.js";
 
   let title;
   let releaseYear;

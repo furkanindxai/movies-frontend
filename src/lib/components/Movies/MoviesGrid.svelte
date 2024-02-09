@@ -2,10 +2,10 @@
 
     import {onMount} from "svelte"
     import MovieCard from "./MovieCard.svelte";
-    import NewMovieModal from "../components/NewMovieModal.svelte"
-    import authStore from "../stores/authStore.js";
-    import moviesStore from "../stores/moviesStore.js"    
-    import moviesOffsetStore  from "../stores/moviesOffsetStore.js"
+    import NewMovieModal from "./NewMovieModal.svelte"
+    import authStore from "../../stores/authStore"
+    import moviesStore from "../../stores/moviesStore" 
+    import moviesOffsetStore  from "../../stores/moviesOffsetStore.js"
 
     let loading = false;
  
@@ -44,19 +44,17 @@
     <NewMovieModal />
 {/if}
 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-4 w-100" data-bs-theme="dark">
-
-        {#each $moviesStore as movie}
-            <div class="col d-flex justify-content-center">
-                <a href={`/movies/${movie.id}`}>
-                    <MovieCard title={movie.title} releaseYear={movie.releaseYear} rating={Math.floor(movie.averageRating)} imageUrl={movie.imageThumbnail ? movie.imageThumbnail : undefined}/>
-                </a>
-            </div>
-        {/each}
-
+    {#each $moviesStore as movie}
+        <div class="col d-flex justify-content-center">
+            <a href={`/movies/${movie.id}`}>
+                <MovieCard title={movie.title} releaseYear={movie.releaseYear} 
+                rating={Math.floor(movie.averageRating)} imageUrl={movie.imageThumbnail ? movie.imageThumbnail : undefined}/>
+            </a>
+        </div>
+    {/each} 
 </div>
 <style>
-
-    a {
-        text-decoration: none;
-    }
+a {
+    text-decoration: none;
+}
 </style>

@@ -5,7 +5,7 @@
     export let poster = "(anonymous)";
     const ratingStars = '⭐'.repeat(rating)
 
-    import authStore from "../stores/authStore";
+    import authStore from "../../../stores/authStore"
 </script>
 
 <div class="container">

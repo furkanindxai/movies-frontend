@@ -3,7 +3,7 @@
     import { goto } from '$app/navigation';
 
     
-    import authStore from "../stores/authStore";
+    import authStore from "../../stores/authStore";
 
     const handlePasswordChange = async (e)=>{
         e.preventDefault()

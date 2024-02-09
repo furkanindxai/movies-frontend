@@ -2,9 +2,9 @@
     import { goto } from '$app/navigation';
     import authStore from '../../lib/stores/authStore';
     import { onMount } from 'svelte';
-    import Table from "../../lib/components/Table.svelte";
-    import Sidebar from "../../lib/components/Sidebar.svelte"
-    let selected = "Users", fields = [], data = [], limit = 14, offset = 0, keyword = "", deleted;    
+    import Table from "../../lib/components/Admin/Table.svelte";
+    import Sidebar from "../../lib/components/Admin/Sidebar.svelte"
+    let selected = "Users", fields = [], data = [], limit = 14, offset = 0, keyword = "", deleted = '';    
     
     const generateTable = async () => {
       if (data.length > 0) {

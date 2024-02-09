@@ -2,7 +2,7 @@
     export let movieId;
     export let myReview;
 
-    import authStore from "../stores/authStore.js";
+    import authStore from "../../../stores/authStore";
     import StarRating from "./StarRating.svelte";
 
     let responseCode = 0;

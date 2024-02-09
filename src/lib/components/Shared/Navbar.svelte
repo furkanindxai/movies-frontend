@@ -1,5 +1,5 @@
 <script>
-    import authStore from "../stores/authStore.js";
+    import authStore from '../../stores/authStore';
     import { goto } from '$app/navigation';
 
     const handleSignOut = () => {
