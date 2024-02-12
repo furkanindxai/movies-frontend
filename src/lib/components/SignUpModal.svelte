@@ -1,4 +1,6 @@
 <script>
+  import authControllerInstance from "../controllers/authController.js"
+
   let email;
   let password;
   let responseCode = 0;
@@ -6,24 +8,13 @@
   const handleSignUp = async (e)=>{
     e.preventDefault()
 
-    const user = {email, password}
-    const response = await fetch("http://localhost:3000/api/v1/auth/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(user),
-      });
-
-    responseCode = response.status;
-    result = await response.json();
-    result = result.message;
-    if (responseCode === 201) 
-    {
+    const response = await authControllerInstance.signUp(email, password)
+    responseCode = response.responseCode
+    result = response.result.message   
+    if (responseCode === 201) {
         email = ''
         password = ''
     }
-
   }
 </script>
 

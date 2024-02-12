@@ -3,18 +3,18 @@ const URL = 'http://localhost:3000/api/v1/auth'
 export const signInService = async (email, password) => {
     try {
         const user = {email, password}
-        let response = await fetch(`${url}/signin`, {
-            method: "POST", // or 'PUT'
+        let result = await fetch(`${URL}/signin`, {
+            method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(user),
         });
-        const responseCode = response.status
-        response = await response.json()
+        const responseCode = result.status
+        result = await result.json()
         return {
             responseCode,
-            response
+            result
         }
         
     }
@@ -26,7 +26,7 @@ export const signInService = async (email, password) => {
 export const signUpService = async (email, password) => {
     try {
         const user = {email, password}
-        let response = await fetch("http://localhost:3000/api/v1/auth/signup", {
+        let result = await fetch(`${URL}/signup`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -34,11 +34,11 @@ export const signUpService = async (email, password) => {
             body: JSON.stringify(user),
         });
 
-        const responseCode = response.status;
-        response = await response.json();
+        const responseCode = result.status;
+        result = await result.json();
         return {
             responseCode,
-            response
+            result
         }
     }
     catch (e) {

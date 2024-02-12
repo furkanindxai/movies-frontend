@@ -4,73 +4,43 @@
 
     
     import authStore from "../../stores/authStore";
+    import userControllerInstance from "../../controllers/userController"
 
     const handlePasswordChange = async (e)=>{
         e.preventDefault()
 
-        const password = {newPassword, password: oldPassword, confirmPassword}
-        const response = await fetch("http://localhost:3000/api/v1/users/me/password", {
-        method: "PATCH", // or 'PUT'
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${$authStore.token}`,
-        },
-        body: JSON.stringify(password),
-        });
-
-        responseCode = response.status;
-        if (responseCode === 204) 
-        {
+        const response = await userControllerInstance.handlePasswordChangeController($authStore.token, oldPassword, newPassword, confirmPassword)
+        if (response.responseCode === 204) {
             oldPassword = ''
             newPassword = ''
             confirmPassword = ''
         }
-        result = await response.json();
-        result = result.message
-
+        responseCode = response.responseCode
+        result = response.result.message
   }
     const handleEmailChange = async (e)=>{
         e.preventDefault()
 
-        const email = {email: newEmail}
-        const response = await fetch("http://localhost:3000/api/v1/users/me", {
-        method: "PUT", // or 'PUT'
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${$authStore.token}`,
-        },
-        body: JSON.stringify(email),
-        });
-
-        responseCode = response.status;
+        const response = await userControllerInstance.handleEmailChangeController($authStore.token, newEmail)
+        responseCode = response.responseCode
+        result = response.result.message
         if (responseCode === 204) 
         {
             newEmail = ''
         }
-        result = await response.json();
-        result = result.message
-
   }
 
     const handleDelete = async (e)=>{
         e.preventDefault()
-
-        
-        const response = await fetch("http://localhost:3000/api/v1/users/me", {
-        method: "DELETE", // or 'PUT'
-        headers: {
-            "Authorization": `Bearer ${$authStore.token}`,
-        },
-        });
-
-        responseCode = response.status;
+        const response = await userControllerInstance.handleDeleteController($authStore.token)
+        responseCode = response.responseCode;
         if (responseCode === 204) {
             window.localStorage.clear()
             authStore.set({email:'',token:'', userId:'', roles:'', isAuth: 0})
             goto('/')
 
         }
-
+        else result = response.result.message
   }
 
 </script>
@@ -78,7 +48,7 @@
 <div class="container">
     {#if responseCode === 204}
         <div class="alert alert-success" role="alert">
-        Password updated.
+        {result}
         </div>
     {:else if responseCode >= 400}
         <div class="alert alert-danger" role="alert">

@@ -1,24 +1,17 @@
 <script>
   import authStore from "../stores/authStore.js"
-
+  import authControllerInstance from "../../lib/controllers/authController.js"
+  
   let email;
   let password;
   let responseCode = 0;
   let result;
+  
   const handleSignIn = async (e)=>{
     e.preventDefault()
-
-    const user = {email, password}
-    const response = await fetch("http://localhost:3000/api/v1/auth/signin", {
-      method: "POST", // or 'PUT'
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(user),
-      });
-
-    responseCode = response.status;
-    result = await response.json();
+    const response = await authControllerInstance.signIn(email, password)
+    responseCode = response.responseCode
+    result = response.result
     if (responseCode === 200) 
     {
         const closeButton = document.getElementById('signInModalCloser')

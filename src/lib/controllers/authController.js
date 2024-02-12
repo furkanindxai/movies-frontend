@@ -1,5 +1,4 @@
-import authService from "../services/authService.js"
-
+import { signUpService, signInService } from "../services/authService.js"
 class AuthController {
     constructor() {
         if (AuthController.instance) {
@@ -11,19 +10,14 @@ class AuthController {
     }
 
     async signIn(email, password) {
-        if (!email || !password) {
-            return {
-                status: 401,
-                success: false,
-                message: "Invalid email/password."
-            }
-        }
-        const result = await authService.login()
+        const result = await signInService(email, password)
         return result
+
     }
 
     async signUp(email, password) {
-
+        const result = await signUpService(email, password)
+        return result
     }
 }
 
