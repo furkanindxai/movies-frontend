@@ -47,7 +47,6 @@
       padding: 0.5rem 0;
       margin: 0.125rem 0 0;
       font-size: 1rem;
-      color: #212529;
       text-align: left;
       list-style: none;
       background-color: #5c636a;
@@ -62,7 +61,7 @@
       padding: 0.25rem 1.5rem;
       clear: both;
       font-weight: 400;
-      color: #212529;
+      color: white;
       text-align: inherit;
       white-space: nowrap;
       background-color: transparent;
