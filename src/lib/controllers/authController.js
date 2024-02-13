@@ -9,13 +9,13 @@ class AuthController {
         }
     }
 
-    async signIn(email, password) {
+    async signInController(email, password) {
         const result = await signInService(email, password)
         return result
 
     }
 
-    async signUp(email, password) {
+    async signUpController(email, password) {
         const result = await signUpService(email, password)
         return result
     }

@@ -13,7 +13,7 @@
         if (e.key === 'Enter' && (e.target.value !== '' || deleted || order ||  genres.length > 0 )) {
             let url = `http://localhost:3000/api/v1/movies?` + (e.target.value !== '' ? `keyword=${e.target.value}&` : '' ) +
              (sortBy ? `sortBy=${sortBy}&` : '' ) + (order ? `order=${order}&` : '' ) +  (genres.length > 0 ? `genres=${String(genres)}&` : '' ) +
-             (deleted ? `deleted=${deleted}&` :'')
+             (deleted ? `deleted=${deleted}&` :'deleted=false&')
             let moviesList = await fetch(url,{
                 headers: {
                     "Authorization": $authStore.roles.includes("admin") ? `Bearer ${$authStore.token}` : undefined

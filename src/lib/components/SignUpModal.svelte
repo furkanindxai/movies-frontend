@@ -8,7 +8,7 @@
   const handleSignUp = async (e)=>{
     e.preventDefault()
 
-    const response = await authControllerInstance.signUp(email, password)
+    const response = await authControllerInstance.signUpController(email, password)
     responseCode = response.responseCode
     result = response.result.message   
     if (responseCode === 201) {

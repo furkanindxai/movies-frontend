@@ -9,7 +9,7 @@
   
   const handleSignIn = async (e)=>{
     e.preventDefault()
-    const response = await authControllerInstance.signIn(email, password)
+    const response = await authControllerInstance.signInController(email, password)
     responseCode = response.responseCode
     result = response.result
     if (responseCode === 200) 

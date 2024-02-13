@@ -3,14 +3,11 @@
     import { onMount } from "svelte";
     import GenreTag from "./GenreTag.svelte";
     import authStore from "../../stores/authStore";
+    import movieControllerInstance from "../../controllers/movieController.js"
+
     let movieJSON = 0;
 	onMount(async () => {
-        const movie = await fetch(`http://localhost:3000/api/v1/movies/${movieId}`, {
-                    headers: {
-                    "Authorization": $authStore.roles.includes("admin") ? `Bearer ${$authStore.token}` : undefined
-            }
-        })
-        movieJSON = await movie.json()
+        movieJSON = await movieControllerInstance.getMovieController(movieId, $authStore.roles, $authStore.token)
 	});
 </script>
 <div class="container" id="movie-holder">

@@ -4,8 +4,8 @@
     import Reviews from '../../../lib/components/Movies/Reviews/Reviews.svelte'
     import SearchBox from '../../../lib/components/Shared/SearchBox.svelte';
     let movieId = $page.params.id;
-
 </script>
+
 <SearchBox />
 <MovieDetails {movieId} />
 <Reviews movieId={movieId}/>

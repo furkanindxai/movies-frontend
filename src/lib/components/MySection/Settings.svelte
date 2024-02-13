@@ -120,4 +120,8 @@
         border: none;
     }
 
+    button:hover {
+        background-color: #d63837;
+    }
+
 </style>
