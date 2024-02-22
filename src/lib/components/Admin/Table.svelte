@@ -81,7 +81,10 @@
           
       })
       if (response.status === 204) {
-        let response = await fetch(`http://localhost:3000/api/v1/${selected.toLowerCase()}?limit=${limit}&offset=${offset}&keyword=${keyword}&deleted=${deleted}`,{
+        let url = `http://localhost:3000/api/v1/${selected.toLowerCase()}?limit=${limit}&offset=${offset}&keyword=${keyword}&deleted=${deleted}`
+        url = selected.toLowerCase() !== "ratings" ? url :
+          `http://localhost:3000/api/v1/${selected.toLowerCase()}?limit=${limit}&offset=${offset}&deleted=${deleted}`
+        let response = await fetch(url, {
           headers: {
               "Authorization": `Bearer ${$authStore.token}`
           }
