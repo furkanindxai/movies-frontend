@@ -19,7 +19,6 @@
         });
 
         responseCode = response.status;
-        result = await response.json();
 
     }
 

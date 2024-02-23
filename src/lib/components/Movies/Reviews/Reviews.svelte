@@ -22,6 +22,7 @@
             rating: 0,
             review: ''
         };
+        if (myReview && !myReview.review) myReview.review = ''
         otherReviews = otherReviews.filter(rating=>rating.userId !== $authStore.id)        
 	});
 </script>
