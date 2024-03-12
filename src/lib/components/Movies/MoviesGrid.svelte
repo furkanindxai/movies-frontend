@@ -6,15 +6,59 @@
     import authStore from "../../stores/authStore"
     import moviesStore from "../../stores/moviesStore" 
     import moviesOffsetStore  from "../../stores/moviesOffsetStore.js"
-
+    import graphqlResponseParser from "../../../helpers/graphqlResponseParser"
     let loading = false;
  
+
+    const URL = 'http://172.25.176.79:4002/graphql'
+
     async function fetchMoreMovies() {
         moviesOffsetStore.update(value=>value+8)
-        let moviesList = await fetch(`http://localhost:3000/api/v1/movies?limit=8&offset=${$moviesOffsetStore}`)
+        let moviesList = await fetch(URL, {
+            method: 'POST',
+          
+            headers: {
+              "Content-Type": "application/json"
+ 
+            },
+          
+            body: JSON.stringify({
+              query: `query Movies {
+                movies(params: { limit: 8, offset: ${$moviesOffsetStore} }) {
+                    id
+                    poster
+                    title
+                    directors
+                    producers
+                    genres
+                    releaseYear
+                    description
+                    averageRating
+                    imageThumbnail
+                    image
+                    createdAt
+                    updatedAt
+                    deletedAt
+                }
+            }`
+            })
+        })
+
+
         moviesList = await moviesList.json()
+        moviesList = graphqlResponseParser(moviesList, 200, "movies")
+        moviesList = moviesList.result
         moviesStore.update(movies=>[...movies, ...moviesList])
         loading = false;
+
+
+
+
+
+        // let moviesList = await fetch(`http://localhost:3000/api/v1/movies?limit=8&offset=${$moviesOffsetStore}`)
+        // moviesList = await moviesList.json()
+        // moviesStore.update(movies=>[...movies, ...moviesList])
+        // loading = false;
   }
 
 

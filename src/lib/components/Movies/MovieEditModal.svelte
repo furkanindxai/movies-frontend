@@ -1,49 +1,132 @@
 <script>
+  
+    export let id;
+
     import authStore from "../../stores/authStore";
     import postedStore from "../../stores/postedStore";
+    import graphqlResponseParser from "../../../helpers/graphqlResponseParser";
     let imageThumbnail;
     let image;
     let description;
     let responseCode = 0;
-    export let id;
+    
+    const URL = 'http://172.25.176.79:4002/graphql'
+
     const handleUpdate = async (e)=>{
       e.preventDefault()
    
       if (imageThumbnail && image ) {
-        const response = await fetch(`http://localhost:3000/api/v1/movies/${id}`, {
-            method: "PATCH",
+        let result = await fetch(URL, {
+            method: 'POST',
+          
             headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${$authStore.token}`
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${$authStore.token}`
             },
+          
             body: JSON.stringify({
-                image,
-                imageThumbnail
-            }),
-            });
-        responseCode = response.status
+              query: `mutation AddPoster {
+                        addPoster(id: "${id}", image: "${image}", imageThumbnail: "${imageThumbnail}")
+                      }`
+            })
+        })
+
+        result = await result.json()
+        const parsedResult = graphqlResponseParser(result, 200, "addPoster")
+        responseCode = parsedResult.responseCode
+            
+        // const response = await fetch(`http://localhost:3000/api/v1/movies/${id}`, {
+        //     method: "PATCH",
+        //     headers: {
+        //     "Content-Type": "application/json",
+        //     "Authorization": `Bearer ${$authStore.token}`
+        //     },
+        //     body: JSON.stringify({
+        //         image,
+        //         imageThumbnail
+        //     }),
+        //     });
+        // responseCode = response.status
       }
       if (description) {
-        const response = await fetch(`http://localhost:3000/api/v1/movies/${id}`, {
-            method: "PUT",
+
+
+
+        let result = await fetch(URL, {
+            method: 'POST',
+          
             headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${$authStore.token}`
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${$authStore.token}`
             },
+          
             body: JSON.stringify({
-                description
-            }),
-            });
-        responseCode = response.status
+              query: `mutation UpdateMovie {
+                          updateMovie(id: "${id}", description: "${description}")
+                      }`
+            })
+        })
+
+        result = await result.json()
+        const parsedResult = graphqlResponseParser(result, 200, "updateMovie")
+        responseCode = parsedResult.responseCode
+
+        // const response = await fetch(`http://localhost:3000/api/v1/movies/${id}`, {
+        //     method: "PUT",
+        //     headers: {
+        //     "Content-Type": "application/json",
+        //     "Authorization": `Bearer ${$authStore.token}`
+        //     },
+        //     body: JSON.stringify({
+        //         description
+        //     }),
+        //     });
+        // responseCode = response.status
       }
       if (description || (image && imageThumbnail)) {
-          let postedList = await fetch("http://localhost:3000/api/v1/users/me/movies?type=posted",{
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${$authStore.token}`
-            }})
-            postedList = await postedList.json()
-            postedStore.set(postedList)
+
+        let postedList = await fetch(URL, {
+            method: 'POST',
+          
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${$authStore.token}`
+            },
+          
+            body: JSON.stringify({
+              query: `query UserMovies {
+                userMovies(type: "posted") {
+                    ... on Movie {
+                        id
+                        poster
+                        title
+                        directors
+                        producers
+                        genres
+                        releaseYear
+                        description
+                        averageRating
+                        imageThumbnail
+                        image
+                        createdAt
+                        updatedAt
+                        deletedAt
+                    }
+                }
+            }`
+            })
+        })
+
+        postedList = await postedList.json()
+        postedList = graphqlResponseParser(postedList, 200, "userMovies")
+        postedList = postedList.result
+        postedStore.set(postedList)
+          // let postedList = await fetch("http://localhost:3000/api/v1/users/me/movies?type=posted",{
+          //       headers: {
+          //           "Content-Type": "application/json",
+          //           "Authorization": `Bearer ${$authStore.token}`
+          //   }})
+          //   postedList = await postedList.json()
       }
       image = ''
       imageThumbnail = ''

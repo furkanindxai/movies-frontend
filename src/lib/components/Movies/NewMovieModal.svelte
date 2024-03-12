@@ -1,6 +1,7 @@
 <script>
   import TagsInput from "../Shared/TagsInput.svelte"
   import authStore from "../../stores/authStore"
+  import graphqlResponseParser from "../../../helpers/graphqlResponseParser";
   import moviesStore from "../../stores/moviesStore.js";
 
   let title;
@@ -14,23 +15,62 @@
   let responseCode = 0;
   let result;
 
+const URL = 'http://172.25.176.79:4002/graphql'
 
   const handleAdd = async (e)=>{
     e.preventDefault()
     
-    const movie = {title, releaseYear, genres, directors, producers, image, imageThumbnail, description}
-    const response = await fetch("http://localhost:3000/api/v1/movies", {
-      method: "POST", // or 'PUT'
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${$authStore.token}`
-      },
-      body: JSON.stringify(movie),
-      });
+    // const movie = {title, releaseYear, genres, directors, producers, image, imageThumbnail, description}
 
-    responseCode = response.status;
-    result = await response.json();
-    result = result.message;
+    let response = await fetch(URL, {
+            method: 'POST',
+          
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${$authStore.token}`
+            },
+          
+            body: JSON.stringify({
+              query: `mutation AddMovie {
+                          addMovie(
+                              movie: {
+                                  title: "${title}"
+                                  description: "${description}"
+                                  releaseYear: ${releaseYear}
+                                  producers: ${JSON.stringify(producers)}
+                                  directors: ${JSON.stringify(directors)}
+                                  genres: ${JSON.stringify(genres)}
+                                  image: "${image}"
+                                  imageThumbnail: "${imageThumbnail}"
+                              }
+                          ) {
+                              message
+                          }
+                        }`
+            })
+        })
+
+
+        response = await response.json()
+        response = graphqlResponseParser(response, 200, "addMovie")
+        result = response.result.message
+        responseCode = response.responseCode
+
+
+
+
+    // const response = await fetch("http://localhost:3000/api/v1/movies", {
+    //   method: "POST", // or 'PUT'
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     "Authorization": `Bearer ${$authStore.token}`
+    //   },
+    //   body: JSON.stringify(movie),
+    //   });
+
+    // responseCode = response.status;
+    // result = await response.json();
+    // result = result.message;
     if (responseCode === 201) 
     {
       title = '';
