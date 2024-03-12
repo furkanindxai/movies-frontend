@@ -1,26 +1,91 @@
 <script>
+    import graphqlResponseParser from "../../../helpers/graphqlResponseParser.js";
     export let imageThumbnail, title, releaseYear, directors, movieId, rating, type = "normal", deletedAt = false;
     import authStore from "../../stores/authStore.js";
     import postedStore from "../../stores/postedStore.js";
     import MovieEditModal from "./MovieEditModal.svelte";
     const ratingStars =  '⭐'.repeat(Math.floor(rating))
 
+    const URL = 'http://172.25.176.79:4002/graphql'
+
+
     const onDelete = async (e) => {
       e.preventDefault()
-      const response = await fetch(`http://localhost:3000/api/v1/movies/${movieId}`, {
-      method: "DELETE", // or 'PUT'
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${$authStore.token}`
-      }
-      });
-      let postedList = await fetch("http://localhost:3000/api/v1/users/me/movies?type=posted",{
+
+
+      let response = await fetch(URL, {
+            method: 'POST',
+          
             headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${$authStore.token}`
-        }})
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${$authStore.token}`
+            },
+          
+            body: JSON.stringify({
+              query: `mutation DeleteMovie {
+                        deleteMovie(id: "${movieId}")
+              }`
+        })
+      })
+
+      response = await response.json()
+
+
+
+    //   const response = await fetch(`http://localhost:3000/api/v1/movies/${movieId}`, {
+    //   method: "DELETE", // or 'PUT'
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     "Authorization": `Bearer ${$authStore.token}`
+    //   }
+    //   });
+
+
+    let postedList = await fetch(URL, {
+            method: 'POST',
+          
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${$authStore.token}`
+            },
+          
+            body: JSON.stringify({
+              query: `query UserMovies {
+                userMovies(type: "posted") {
+                    ... on Movie {
+                        id
+                        poster
+                        title
+                        directors
+                        producers
+                        genres
+                        releaseYear
+                        description
+                        averageRating
+                        imageThumbnail
+                        image
+                        createdAt
+                        updatedAt
+                        deletedAt
+                    }
+                }
+            }`
+            })
+        })
+
         postedList = await postedList.json()
+        postedList = graphqlResponseParser(postedList, 200, "userMovies")
+        postedList = postedList.result
         postedStore.set(postedList)
+
+
+    //   let postedList = await fetch("http://localhost:3000/api/v1/users/me/movies?type=posted",{
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //             "Authorization": `Bearer ${$authStore.token}`
+    //     }})
+    //     postedList = await postedList.json()
+    //     postedStore.set(postedList)
     }
 
 </script>

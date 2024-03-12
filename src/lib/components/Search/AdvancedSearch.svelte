@@ -5,23 +5,62 @@
     import { goto } from '$app/navigation';
     import authStore from "../../stores/authStore.js"
     import movieSearchResultsStore from "../../stores/movieSearchResultsStore.js";
+    
+    import graphqlResponseParser from "../../../helpers/graphqlResponseParser";
 
     let genres = []
     let deleted, order, sortBy;
     
     const handleSearch = async (e) => {
         if (e.key === 'Enter' && (e.target.value !== '' || deleted || order ||  genres.length > 0 )) {
-            let url = `http://localhost:3000/api/v1/movies?` + (e.target.value !== '' ? `keyword=${e.target.value}&` : '' ) +
-             (sortBy ? `sortBy=${sortBy}&` : '' ) + (order ? `order=${order}&` : '' ) +  (genres.length > 0 ? `genres=${String(genres)}&` : '' ) +
-             (deleted ? `deleted=${deleted}&` :'')
-            let moviesList = await fetch(url,{
+
+
+            let moviesList = await fetch('http://172.25.176.79:4002/graphql', {
+                method: 'POST',
+                
                 headers: {
+                    "Content-Type": "application/json",
                     "Authorization": $authStore.roles.includes("admin") ? `Bearer ${$authStore.token}` : undefined
-                }
-            })
-            
+                },
+                
+                body: JSON.stringify({
+                    query: `query Movies {
+                        movies(params:{ keyword: "${e.target.value}", genres: "${genres.length > 0 ? `${String(genres)}` : ''}",
+                         deleted: "${deleted ? `${deleted}` :''}", sortBy: "${sortBy ? `${sortBy}` : ''}",
+                          order: "${order ? `${order}` : ''}" }) {
+                            id
+                            poster
+                            title
+                            directors
+                            producers
+                            genres
+                            releaseYear
+                            description
+                            averageRating
+                            imageThumbnail
+                            image
+                            createdAt
+                            updatedAt
+                            deletedAt
+                        }
+                    }`
+            })})
+
             moviesList = await moviesList.json()
-            movieSearchResultsStore.set(moviesList)
+
+            moviesList = graphqlResponseParser(moviesList, 200, "movies")
+
+            // let url = `http://localhost:3000/api/v1/movies?` + (e.target.value !== '' ? `keyword=${e.target.value}&` : '' ) +
+            //  (sortBy ? `sortBy=${sortBy}&` : '' ) + (order ? `order=${order}&` : '' ) +  (genres.length > 0 ? `genres=${String(genres)}&` : '' ) +
+            //  (deleted ? `deleted=${deleted}&` :'')
+            // let moviesList = await fetch(url,{
+            //     headers: {
+            //         "Authorization": $authStore.roles.includes("admin") ? `Bearer ${$authStore.token}` : undefined
+            //     }
+            // })
+            
+            // moviesList = await moviesList.json()
+            movieSearchResultsStore.set(moviesList.result)
             // goto(`/search${url.substring(35)}`)
             e.target.value=""
             goto(`/search`)
@@ -39,12 +78,12 @@
             
         </div>
         <div class="dropdowns">
-            {#if $authStore.roles.includes('admin')}
+            <!-- {#if $authStore.roles.includes('admin')}
                 <div class="dropdown-div">
                     <Dropdown type={'Deleted'} options={['true', 'false']} bind:selectedOption={deleted}/>
                     
                 </div>
-            {/if}
+            {/if} -->
             <div class="dropdown-div">
                 <Dropdown type={'Sort by'} options={['title', 'releaseYear']} bind:selectedOption={sortBy}/>
                 

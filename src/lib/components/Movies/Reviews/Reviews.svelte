@@ -17,13 +17,13 @@
             }
         })
         otherReviews = await ratings.json()
-        myReview = otherReviews.find(rating => rating.userId === $authStore.id)
+        myReview = otherReviews.find(rating => rating.userId === Number($authStore.id))
         if (!myReview) myReview = {
             rating: 0,
             review: ''
         };
         if (myReview && !myReview.review) myReview.review = ''
-        otherReviews = otherReviews.filter(rating=>rating.userId !== $authStore.id)        
+        otherReviews = otherReviews.filter(rating=>rating.userId !== Number($authStore.id))        
 	});
 </script>
 

@@ -2,18 +2,55 @@
     import { goto } from '$app/navigation';
     import movieSearchResultsStore from "../../stores/movieSearchResultsStore.js"
     import authStore from '../../stores/authStore.js';
+    import graphqlResponseParser from "../../../helpers/graphqlResponseParser.js"
+
     export let handleSearch = async (e) => {
-            if (e.key === 'Enter' && e.target.value !== '') {
-                let moviesList = await fetch(`http://localhost:3000/api/v1/movies?keyword=${e.target.value}`, {
-                    headers: {
+        if (e.key === 'Enter' && e.target.value !== '') {
+
+            let moviesList = await fetch('http://172.25.176.79:4002/graphql', {
+                method: 'POST',
+                
+                headers: {
+                    "Content-Type": "application/json",
                     "Authorization": $authStore.roles.includes("admin") ? `Bearer ${$authStore.token}` : undefined
-                }
-                })
-                moviesList = await moviesList.json()
-                movieSearchResultsStore.set(moviesList)
+                },
+                
+                body: JSON.stringify({
+                    query: `query Movies {
+                        movies(params: { keyword: "${e.target.value}" }) {
+                            id
+                            poster
+                            title
+                            directors
+                            producers
+                            genres
+                            releaseYear
+                            description
+                            averageRating
+                            imageThumbnail
+                            image
+                            createdAt
+                            updatedAt
+                            deletedAt
+                        }
+                    }`
+            })})
+
+            moviesList = await moviesList.json()
+
+            moviesList = graphqlResponseParser(moviesList, 200, "movies")
+
+
+            // let moviesList = await fetch(`http://localhost:3000/api/v1/movies?keyword=${e.target.value}`, {
+            //     headers: {
+            //     "Authorization": $authStore.roles.includes("admin") ? `Bearer ${$authStore.token}` : undefined
+            // }
+            // })
+            // moviesList = await moviesList.json()
+            movieSearchResultsStore.set(moviesList.result)
                 // goto(`/search?keyword=${e.target.value}`)
-                goto(`/search`)
-            }
+            goto(`/search`)
+        }
     }
 </script>
 <div>
