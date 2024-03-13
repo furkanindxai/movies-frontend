@@ -4,19 +4,53 @@
     import ReviewBox from "./ReviewBox.svelte";
     import Review from "./Review.svelte";
     import {onMount} from "svelte"
+    import graphqlResponseParser from "../../../../helpers/graphqlResponseParser";
 
     let otherReviews = []
     let myReview = {
         rating: 0,
         review: ''
     };
+    const URL = 'http://172.25.176.79:4002/graphql'
+
     onMount(async () => {
-        const ratings = await fetch(`http://localhost:3000/api/v1/movies/${movieId}/ratings`,{
+        let result = await fetch(URL, {
+            method: 'POST',
+          
             headers: {
-                    "Authorization": $authStore.roles.includes("admin") ? `Bearer ${$authStore.token}` : undefined
-            }
+              "Content-Type": "application/json",
+               "Authorization": `Bearer ${$authStore.token}`
+
+            },
+          
+            body: JSON.stringify({
+              query: `query Movie {
+                        movie(id: ${movieId}) {
+                            ratings {
+                                id
+                                userId
+                                movieId
+                                rating
+                                review
+                                createdAt
+                                updatedAt
+                                deletedAt
+                            }
+                        }
+                    }`
+            })
         })
-        otherReviews = await ratings.json()
+        
+        result = await result.json()
+
+        result = graphqlResponseParser(result, 200, "movie")
+
+        // const ratings = await fetch(`http://localhost:3000/api/v1/movies/${movieId}/ratings`,{
+        //     headers: {
+        //             "Authorization": $authStore.roles.includes("admin") ? `Bearer ${$authStore.token}` : undefined
+        //     }
+        // })
+        otherReviews = result.result.ratings
         myReview = otherReviews.find(rating => rating.userId === Number($authStore.id))
         if (!myReview) myReview = {
             rating: 0,

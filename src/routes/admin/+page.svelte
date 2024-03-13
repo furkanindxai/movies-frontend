@@ -4,7 +4,9 @@
     import { onMount } from 'svelte';
     import Table from "../../lib/components/Admin/Table.svelte";
     import Sidebar from "../../lib/components/Admin/Sidebar.svelte"
-    let selected = "Users", fields = [], data = [], limit = 14, offset = 0, keyword = "", deleted = '';    
+    let selected = "Users", fields = [], data = [], limit = 14, offset = 0, keyword = "", deleted = '';   
+    import graphqlResponseParser from '../../helpers/graphqlResponseParser';
+    const URL = 'http://172.25.176.79:4002/graphql'
     
     const generateTable = async () => {
       if (data.length > 0) {
@@ -39,12 +41,37 @@
     onMount(async() => {
       if ($authStore.isAuth === 0 || !$authStore.roles.includes("admin")) goto("/")
       else {
-          let response = await fetch(`http://localhost:3000/api/v1/users?limit=14&offset=0`,{
-          headers: {
+        let response = await fetch(URL, {
+            method: 'POST',
+          
+            headers: {
+              "Content-Type": "application/json",
               "Authorization": `Bearer ${$authStore.token}`
-          }
+ 
+            },
+          
+            body: JSON.stringify({
+              query: `query Users {
+                      users(params: { limit: 14, offset: 0 }) {
+                        id
+                        email
+                        roles
+                        createdAt
+                        updatedAt
+                        deletedAt
+                    }}`
+            })
           })
-          data = await response.json()
+          response = await response.json()
+          response = graphqlResponseParser(response, 200, selected.toLowerCase())
+          data = response.result
+
+          // let response = await fetch(`http://localhost:3000/api/v1/users?limit=14&offset=0`,{
+          // headers: {
+          //     "Authorization": `Bearer ${$authStore.token}`
+          // }
+          // })
+          // data = await response.json()
 
           await generateTable()
       }

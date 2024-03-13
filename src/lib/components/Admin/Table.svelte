@@ -2,6 +2,8 @@
     export let fields = [], data = [], selected="Users", limit, offset, keyword, deleted;
 
     import authStore from "../../stores/authStore";
+    import graphqlResponseParser from "../../../helpers/graphqlResponseParser";
+    const URL = 'http://172.25.176.79:4002/graphql'
 
     const handleLoad = async (e) => {
       e.preventDefault()
@@ -11,15 +13,107 @@
         else offset = offset - 14
       }
       
-      let url = `http://localhost:3000/api/v1/${selected === "Users" ? 
-      "users" : (selected === "Movies" ? "movies" : "ratings")}?limit=${limit}&offset=${offset}&keyword=${keyword}&deleted=${deleted}`
-      let response = await fetch(url,{
+      let response;
+
+      if (selected === "Movies") {
+        response = await fetch(URL, {
+              method: 'POST',
+            
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${$authStore.token}`
+  
+              },
+            
+              body: JSON.stringify({
+                query: `query Movies {
+                  movies(params: { limit: 14, offset: ${offset}, keyword: "${keyword}", deleted: "${deleted}" }) {
+                      id
+                      poster
+                      title
+                      directors
+                      producers
+                      genres
+                      releaseYear
+                      description
+                      averageRating
+                      imageThumbnail
+                      image
+                      createdAt
+                      updatedAt
+                      deletedAt
+                  }
+              }`
+              })
+          })
+    }
+
+    else if (selected === "Users") {
+      response = await fetch(URL, {
+          method: 'POST',
+        
           headers: {
-              "Authorization": `Bearer ${$authStore.token}`
-          }
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${$authStore.token}`
+
+          },
+        
+          body: JSON.stringify({
+            query: `query Users {
+                      users(params: { limit: 14, offset: ${offset}, keyword: "${keyword}", deleted: "${deleted}" }) {
+                        id
+                        email
+                        roles
+                        createdAt
+                        updatedAt
+                        deletedAt
+                    }}`
+          })
       })
+    }
+
+    else {
+      response = await fetch(URL, {
+          method: 'POST',
+        
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${$authStore.token}`
+
+          },
+        
+          body: JSON.stringify({
+            query: ` query Ratings {
+              ratings(params: { limit: 14, offset: ${offset}, deleted: "${deleted}" }) {
+                  id
+                  userId
+                  movieId
+                  rating
+                  review
+                  createdAt
+                  updatedAt
+                  deletedAt
+              }
+            }`
+          })
+      })
+    }
+
+    let resData = await response.json()
+    resData = graphqlResponseParser(resData, 200, selected.toLowerCase())
+    resData = resData.result
+
+
+
+      // let url = `http://localhost:3000/api/v1/${selected === "Users" ? 
+      // "users" : (selected === "Movies" ? "movies" : "ratings")}?limit=${limit}&offset=${offset}&keyword=${keyword}&deleted=${deleted}`
+      // let response = await fetch(url,{
+      //     headers: {
+      //         "Authorization": `Bearer ${$authStore.token}`
+      //     }
+      // })
       
-      let resData = await response.json()
+      // let resData = await response.json()
       if (resData.length > 0) {
 
         data = resData
@@ -66,30 +160,130 @@
     const onAction = async (e, detail, i, selected) => {
       e.preventDefault()
       let url = '';
+      let query = '';
       if (detail === "Delete") {
-        url = `http://localhost:3000/api/v1/${selected.toLowerCase()}/${i}`
+        if (selected === "Users") {
+          query  = `mutation DeleteUserByAdmin {
+                      deleteUserByAdmin(id: ${i})}`
+        }
+        else if (selected === "Movies") {
+          query = `mutation DeleteMovie {
+                      deleteMovie(id: ${i})}`
+        }
+        else {
+          query = `mutation DeleteRating {
+                    deleteRating(id: ${i})}`
+        }
         
       }
       else if (detail === "Restore") {
-        url = `http://localhost:3000/api/v1/${selected.toLowerCase()}/restore/${i}`
+        if (selected === "Users") {
+          query  = `mutation RestoreUser {
+                      restoreUser(id: ${i})}`
+        }
+        else if (selected === "Movies") {
+          query = `mutation RestoreMovie {
+                    restoreMovie(id: ${i})}`
+        }
+        else {
+          query = `mutation RestoreRating {
+                      restoreRating(id: ${i})}`
+        }
       }
-      let response = await fetch(`${url}`,{
-          method: detail === "Delete" ? "DELETE" : "PATCH",
-          headers: {
-              "Authorization": `Bearer ${$authStore.token}`
-          }
+
+      let response = await fetch(URL, {
+            method: 'POST',
           
-      })
-      if (response.status === 204) {
-        let url = `http://localhost:3000/api/v1/${selected.toLowerCase()}?limit=${limit}&offset=${offset}&keyword=${keyword}&deleted=${deleted}`
-        url = selected.toLowerCase() !== "ratings" ? url :
-          `http://localhost:3000/api/v1/${selected.toLowerCase()}?limit=${limit}&offset=${offset}&deleted=${deleted}`
-        let response = await fetch(url, {
-          headers: {
-              "Authorization": `Bearer ${$authStore.token}`
-          }
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${$authStore.token}` 
+            },
+          
+            body: JSON.stringify({
+              query
+            })
         })
-        data = await response.json()
+        response = await response.json()
+        response = graphqlResponseParser(response, 200, `${detail.toLowerCase()}${selected.substring(0, selected.length-1)}`)
+      // let response = await fetch(`${url}`,{
+      //     method: detail === "Delete" ? "DELETE" : "PATCH",
+      //     headers: {
+      //         "Authorization": `Bearer ${$authStore.token}`
+      //     }
+          
+      // })
+      if (response.responseCode === 204) {
+        if (selected === "Movies") {
+            query = `query Movies {
+                movies(params: { limit: ${limit}, offset: ${offset}, keyword: "${keyword}", deleted: "${deleted}" }) {
+                    id
+                    poster
+                    title
+                    directors
+                    producers
+                    genres
+                    releaseYear
+                    description
+                    averageRating
+                    imageThumbnail
+                    image
+                    createdAt
+                    updatedAt
+                    deletedAt
+                }
+            }`
+        }
+
+        else if (selected === "Users") {
+          query = `query Users {
+                      users(params: { limit: ${limit}, offset: ${offset}, deleted: "${deleted}", keyword: "${keyword}" }) {
+                                        id
+                                        email
+                                        roles
+                                        createdAt
+                                        updatedAt
+                                        deletedAt
+  
+                    }}`
+        }
+        else {
+          query = `query Ratings {
+                      ratings(params: { limit: ${limit}, offset: ${offset}, deleted: "${deleted}" }) {
+                          id
+                          userId
+                          movieId
+                          rating
+                          review
+                          createdAt
+                          updatedAt
+                          deletedAt
+                      }
+                  }`
+        }
+
+        let response = await fetch(URL, {
+            method: 'POST',
+          
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${$authStore.token}` 
+            },
+          
+            body: JSON.stringify({
+              query
+            })
+        })
+        response = await response.json()
+        response = graphqlResponseParser(response, 200, `${selected.toLowerCase()}`)
+        // let url = `http://localhost:3000/api/v1/${selected.toLowerCase()}?limit=${limit}&offset=${offset}&keyword=${keyword}&deleted=${deleted}`
+        // url = selected.toLowerCase() !== "ratings" ? url :
+        //   `http://localhost:3000/api/v1/${selected.toLowerCase()}?limit=${limit}&offset=${offset}&deleted=${deleted}`
+        // let response = await fetch(url, {
+        //   headers: {
+        //       "Authorization": `Bearer ${$authStore.token}`
+        //   }
+        // })
+        data = response.result
         await generateTable()
       
     }
@@ -98,15 +292,103 @@
   const handleSearch = async (e) => {
     if (e.key === 'Enter' && e.target.value !== '') {
     offset = 0;
-    let url = (selected.toLowerCase() === 'movies' || selected.toLowerCase() === 'users') ?
-       `http://localhost:3000/api/v1/${selected.toLowerCase()}?keyword=${e.target.value}&limit=${limit}&deleted=${deleted}`:
-       `http://localhost:3000/api/v1/${selected.toLowerCase()}/${keyword}`
-    let moviesList = await fetch(url, {
-        headers: {
-        "Authorization": `Bearer ${$authStore.token}`
+    let moviesList = []
+
+    if (selected === "Movies") {
+      moviesList = await fetch(URL, {
+            method: 'POST',
+          
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${$authStore.token}`
+ 
+            },
+          
+            body: JSON.stringify({
+              query: `query Movies {
+                movies(params: { limit: 14, offset: ${offset}, keyword: "${keyword}", deleted: "${deleted}" }) {
+                    id
+                    poster
+                    title
+                    directors
+                    producers
+                    genres
+                    releaseYear
+                    description
+                    averageRating
+                    imageThumbnail
+                    image
+                    createdAt
+                    updatedAt
+                    deletedAt
+                }
+            }`
+            })
+        })
     }
-    })
+
+    else if (selected === "Users") {
+      moviesList = await fetch(URL, {
+          method: 'POST',
+        
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${$authStore.token}`
+
+          },
+        
+          body: JSON.stringify({
+            query: `query Users {
+                      users(params: { limit: 14, offset: ${offset}, keyword: "${keyword}", deleted: "${deleted}" }) {
+                        id
+                        email
+                        roles
+                        createdAt
+                        updatedAt
+                        deletedAt
+                    }}`
+          })
+      })
+    }
+
+    else {
+      moviesList = await fetch(URL, {
+          method: 'POST',
+        
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${$authStore.token}`
+
+          },
+        
+          body: JSON.stringify({
+            query: `query Rating {
+                      rating(id: ${keyword}) {
+                          id
+                          userId
+                          movieId
+                          rating
+                          review
+                          createdAt
+                          updatedAt
+                          deletedAt
+                      }
+                  }`
+          })
+      })
+    }
+
+    // let url = (selected.toLowerCase() === 'movies' || selected.toLowerCase() === 'users') ?
+    //    `http://localhost:3000/api/v1/${selected.toLowerCase()}?keyword=${e.target.value}&limit=${limit}&deleted=${deleted}`:
+    //    `http://localhost:3000/api/v1/${selected.toLowerCase()}/${keyword}`
+    // let moviesList = await fetch(url, {
+    //     headers: {
+    //     "Authorization": `Bearer ${$authStore.token}`
+    // }
+    // })
     data = await moviesList.json()
+    data = graphqlResponseParser(data, 200, selected.toLowerCase() === "ratings" ? "rating" : selected.toLowerCase())
+    data = data.result
     if (!Array.isArray(data)) data = [data]
     await generateTable()
     }

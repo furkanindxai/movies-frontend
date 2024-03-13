@@ -4,21 +4,46 @@
 
     import authStore from "../../../stores/authStore";
     import StarRating from "./StarRating.svelte";
-
+    import graphqlResponseParser from "../../../../helpers/graphqlResponseParser"
+    
     let responseCode = 0;
+    const URL = 'http://172.25.176.79:4002/graphql'
 
     async function submitReview(e) {
-        const review = {rating: myReview.rating, review: myReview.review}
-        const response = await fetch(`http://localhost:3000/api/v1/movies/${movieId}/ratings`, {
-        method: "POST", // or 'PUT'
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${$authStore.token}`
-        },
-        body: JSON.stringify(review),
-        });
 
-        responseCode = response.status;
+
+        let result = await fetch(URL, {
+            method: 'POST',
+          
+            headers: {
+              "Content-Type": "application/json",
+               "Authorization": `Bearer ${$authStore.token}`
+
+            },
+          
+            body: JSON.stringify({
+              query: `mutation RateMovie {
+                        rateMovie(id: ${movieId}, rating: ${myReview.rating}, review: "${myReview.review}")
+                    }`
+            })
+        })
+        
+        result = await result.json()
+
+        result = graphqlResponseParser(result, 200, "rateMovie")
+
+
+
+        // const response = await fetch(`http://localhost:3000/api/v1/movies/${movieId}/ratings`, {
+        // method: "POST", // or 'PUT'
+        // headers: {
+        //     "Content-Type": "application/json",
+        //     "Authorization": `Bearer ${$authStore.token}`
+        // },
+        // body: JSON.stringify(review),
+        // });
+
+        responseCode = result.responseCode;
 
     }
 

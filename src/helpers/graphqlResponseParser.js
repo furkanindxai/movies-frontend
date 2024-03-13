@@ -6,7 +6,14 @@ const querySuccessResponseCodeMap = {
     deleteUser: 204,
     addPoster: 204,
     updateMovie: 204,
-    addMovie: 201
+    addMovie: 201,
+    restoreRating: 204,
+    restoreMovie: 204,
+    restoreUser: 204,
+    deleteUser: 204,
+    deleteRating: 204,
+    deleteMovie: 204,
+    rateMovie: 201
 }
 
 const graphqlResponseParser = (graphqlResponse, responseCode, queryName) => {
